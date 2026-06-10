@@ -1,0 +1,1364 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IGFinder 2.0 · Manual de Uso por Pestaña</title>
+<style>
+  :root{
+    /* ── Paleta exacta del programa (índigo cálido + femenina) ── */
+    --bg:#1a1840; --bg2:#201e48; --panel:#282550; --panel2:#302c62;
+    --glass:#38356a; --void:#131028;
+    --cyan:#b18fe8; --cyan2:#9b7dd4; --violet:#d4a8f0; --lavender:#e0ccff;
+    --orchid:#da70d6; --teal:#e8a8d8; --rose:#ff85c0; --blush:#ffb3d1;
+    --magenta:#e040a0; --peach:#ffc5a8; --emerald:#f0b8e8; --sage:#b8e8c8;
+    --amber:#f8d0ee; --gold:#ffd700; --red:#ff7099;
+    --border:#7b68c8; --border-d:#5248a0; --border-dd:#38346a;
+    --txt:#f0e8ff; --txt-dim:#c8b8f0; --txt-muted:#8878b8;
+    --mono:"Courier New",ui-monospace,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:
+      radial-gradient(900px 600px at 85% -5%, rgba(218,112,214,.10), transparent 60%),
+      radial-gradient(700px 500px at -5% 30%, rgba(177,143,232,.10), transparent 55%),
+      var(--bg);
+    color:var(--txt); font-family:var(--mono); font-size:14px; line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--cyan);text-decoration:none}
+
+  /* ── Banda tricolor superior (idéntica al titlebar real) ── */
+  .topband{height:3px;display:flex;position:sticky;top:0;z-index:50}
+  .topband i{flex:1}
+  .topband i:nth-child(1){background:var(--teal)}
+  .topband i:nth-child(2){background:var(--orchid)}
+  .topband i:nth-child(3){background:var(--rose)}
+  .topband i:nth-child(4){background:var(--lavender)}
+
+  /* ── Encabezado del programa ── */
+  header.app{
+    background:var(--void); border-bottom:1px solid var(--border-dd);
+    padding:10px 22px; display:flex; align-items:center; gap:14px;
+    position:sticky; top:3px; z-index:40;
+  }
+  .dna{font-size:22px;letter-spacing:-3px;background:linear-gradient(90deg,var(--lavender),var(--orchid),var(--rose));
+    -webkit-background-clip:text;background-clip:text;color:transparent;filter:saturate(1.2)}
+  .app h1{font-size:18px;font-weight:bold;color:var(--lavender);letter-spacing:.5px}
+  .app .sub{font-size:11px;color:var(--txt-muted)}
+  .app .sep{color:var(--border-d);font-size:18px;margin:0 4px}
+  .app .pill{margin-left:auto;font-size:10px;font-weight:bold;color:var(--emerald);
+    background:rgba(240,184,232,.13);border:1px solid rgba(240,184,232,.4);
+    padding:4px 10px;border-radius:3px}
+
+  /* ── Layout: sidebar + contenido ── */
+  .shell{display:grid;grid-template-columns:230px 1fr;gap:0;align-items:start}
+  nav.side{
+    position:sticky; top:62px; height:calc(100vh - 62px); overflow:auto;
+    background:var(--bg2); border-right:1px solid var(--border-dd);
+    padding:14px 10px;
+  }
+  nav.side .navlabel{font-size:9px;letter-spacing:2px;color:var(--txt-muted);
+    padding:8px 10px 4px;text-transform:uppercase}
+  nav.side a.nav{
+    display:flex;align-items:center;gap:9px;padding:8px 11px;border-radius:5px;
+    color:var(--txt-muted);font-size:12.5px;font-weight:bold;cursor:pointer;
+    border-left:3px solid transparent;transition:.15s;
+  }
+  nav.side a.nav .dot{width:7px;height:7px;border-radius:50%;background:currentColor;flex:none}
+  nav.side a.nav:hover{color:var(--txt-dim);background:rgba(255,255,255,.03)}
+  main{padding:0 30px 90px;max-width:1080px}
+
+  /* ── Intro ── */
+  .intro{padding:34px 0 10px}
+  .intro .eyebrow{font-size:10px;letter-spacing:3px;color:var(--orchid);text-transform:uppercase;margin-bottom:10px}
+  .intro h2{font-size:30px;font-weight:bold;color:var(--txt);line-height:1.2;margin-bottom:14px}
+  .intro h2 em{font-style:normal;color:var(--cyan)}
+  .intro p{color:var(--txt-dim);max-width:760px;margin-bottom:10px;font-size:14px}
+  .legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+  .legend .chip{font-size:11px;padding:4px 11px;border-radius:3px;border:1px solid var(--border-dd);
+    background:var(--panel);color:var(--txt-dim)}
+  .legend .chip b{color:var(--txt)}
+
+  /* ── Sección de pestaña ── */
+  section.tab{padding-top:44px;scroll-margin-top:74px;border-top:1px solid var(--border-dd);margin-top:34px}
+  section.tab:first-of-type{border-top:none}
+  .tabhead{display:flex;align-items:flex-start;gap:14px;margin-bottom:6px}
+  .tabhead .ic{
+    width:46px;height:46px;border-radius:9px;display:grid;place-items:center;font-size:22px;flex:none;
+  }
+  .tabhead .meta .kicker{font-size:10px;letter-spacing:2px;text-transform:uppercase;font-weight:bold}
+  .tabhead .meta h3{font-size:23px;font-weight:bold;color:var(--txt);line-height:1.15;margin:2px 0}
+  .tabhead .meta .lede{color:var(--txt-muted);font-size:12.5px}
+
+  .blocklabel{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--txt-muted);
+    margin:26px 0 10px;display:flex;align-items:center;gap:8px}
+  .blocklabel::after{content:"";flex:1;height:1px;background:var(--border-dd)}
+
+  /* ── Mockup “marco de app” ── */
+  .screen{
+    background:var(--bg); border:1px solid var(--border-dd); border-radius:9px;
+    overflow:hidden; box-shadow:0 18px 50px rgba(0,0,0,.4);
+  }
+  .screen .barrow{display:flex;background:var(--bg2);border-bottom:1px solid var(--border-dd);overflow:hidden}
+  .screen .tabbtn{font-size:11px;font-weight:bold;color:var(--txt-muted);padding:9px 13px;white-space:nowrap;
+    border-bottom:2px solid transparent}
+  .screen .tabbtn.active{color:var(--txt)}
+  .screen .body{padding:12px;display:grid;gap:9px}
+
+  /* paneles internos del mockup */
+  .pane{background:var(--panel);border:1px solid var(--border-dd);border-radius:7px;overflow:hidden}
+  .pane>.h{display:flex;align-items:center;gap:8px;padding:7px 11px;font-size:11px;font-weight:bold}
+  .pane>.h .accent{width:4px;align-self:stretch;border-radius:2px}
+  .pane>.bd{padding:11px;display:grid;gap:9px}
+  .field label{display:block;font-size:10px;color:var(--txt-muted);margin-bottom:3px}
+  .input{background:#0e0c22;border:1px solid var(--border-dd);border-radius:4px;padding:7px 9px;
+    font-size:12px;color:var(--cyan)}
+  .input.ph{color:var(--txt-muted)}
+  .hint{font-size:9.5px;color:var(--txt-dim);font-style:italic}
+  .btns{display:flex;flex-wrap:wrap;gap:6px}
+  .b{font-size:11px;padding:6px 10px;border-radius:4px;border:1px solid var(--border-d);
+    background:var(--panel2);color:var(--txt-dim);cursor:default}
+  .b.solid{border:none;font-weight:bold}
+  .b.run{background:linear-gradient(90deg,var(--emerald),var(--teal));color:#231a33;font-weight:bold;
+    padding:11px;text-align:center;font-size:12.5px}
+  .b.stop{background:rgba(255,112,153,.16);border:1px solid rgba(255,112,153,.45);color:var(--red);
+    font-weight:bold;padding:9px;text-align:center}
+  .tag{display:inline-flex;font-size:10px;padding:3px 8px;border-radius:3px;font-weight:bold}
+
+  /* toggle row */
+  .toggle{display:flex;align-items:center;justify-content:space-between;gap:10px;
+    padding:7px 0;border-bottom:1px solid rgba(120,108,184,.14)}
+  .toggle:last-child{border-bottom:none}
+  .toggle .t-info b{display:block;font-size:11.5px;color:var(--txt-dim)}
+  .toggle .t-info span{font-size:9.5px;color:var(--txt-muted)}
+  .sw{width:34px;height:18px;border-radius:10px;position:relative;flex:none;background:var(--border-dd)}
+  .sw.on{background:var(--emerald)}
+  .sw::after{content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff}
+  .sw.on::after{left:18px}
+
+  /* mini stat cards */
+  .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+  .card{border-radius:7px;padding:9px 11px}
+  .card .ct{font-size:8px;font-weight:bold;letter-spacing:.5px;display:flex;align-items:center;gap:5px}
+  .card .cv{font-size:22px;font-weight:bold;margin-top:3px}
+
+  /* sliders */
+  .slider{display:flex;align-items:center;gap:10px;padding:5px 0}
+  .slider .lab{font-size:11px;color:var(--txt-muted);width:160px}
+  .slider .track{flex:1;height:5px;border-radius:3px;background:var(--border-dd);position:relative}
+  .slider .track i{position:absolute;top:-4px;width:13px;height:13px;border-radius:50%}
+  .slider .val{font-size:11px;font-weight:bold;width:64px;text-align:right}
+
+  /* fake chart / placeholder */
+  .ph-box{min-height:150px;display:grid;place-items:center;text-align:center;border-radius:6px;
+    border:1px dashed var(--border-d);background:rgba(255,255,255,.015);color:var(--txt-muted);
+    font-size:11px;line-height:1.7;padding:14px;white-space:pre-line}
+  .bars{display:flex;align-items:flex-end;gap:6px;height:120px;padding:6px}
+  .bars i{flex:1;border-radius:3px 3px 0 0;opacity:.85}
+
+  /* table */
+  table.t{width:100%;border-collapse:collapse;font-size:11px}
+  table.t th{text-align:left;color:var(--cyan);font-weight:bold;background:rgba(177,143,232,.12);
+    padding:6px 8px;border-bottom:1px solid var(--border-dd);font-size:10px}
+  table.t td{padding:6px 8px;color:var(--txt-dim);border-bottom:1px solid rgba(120,108,184,.12)}
+  table.t tr:nth-child(even) td{background:var(--panel2)}
+
+  /* terminal */
+  .term{background:#0c0a1f;border:1px solid var(--border-dd);border-radius:7px;overflow:hidden}
+  .term .tt{background:#15122d;padding:6px 11px;font-size:11px;color:var(--txt-muted);display:flex;gap:7px;align-items:center}
+  .term pre{padding:11px;font-size:11.5px;line-height:1.7;white-space:pre-wrap}
+  .c-ok{color:var(--emerald)} .c-warn{color:var(--amber)} .c-err{color:var(--red)}
+  .c-info{color:var(--txt-dim)} .c-dim{color:var(--txt-muted)}
+
+  /* chromosome grid */
+  .chrgrid{display:grid;grid-template-columns:repeat(8,1fr);gap:4px}
+  .chrgrid .cc{font-size:9px;text-align:center;padding:7px 0;border-radius:4px;font-weight:bold;
+    border:1px solid var(--border-dd);color:var(--txt-muted);background:var(--panel2)}
+
+  /* sub-panel A-F grid */
+  .subgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+
+  /* dial */
+  .dial{width:118px;height:118px;border-radius:50%;margin:0 auto;
+    background:conic-gradient(var(--teal) 0 38%, var(--cyan) 38% 64%, var(--violet) 64% 78%, var(--border-dd) 78% 100%);
+    display:grid;place-items:center}
+  .dial .inner{width:78px;height:78px;border-radius:50%;background:var(--panel);display:grid;place-items:center;
+    text-align:center}
+  .dial .inner b{font-size:18px;color:var(--lavender)} .dial .inner span{font-size:8px;color:var(--txt-muted)}
+
+  /* manual blocks */
+  .manual{margin-top:18px;display:grid;gap:14px}
+  .purpose{background:var(--panel);border:1px solid var(--border-dd);border-left-width:4px;
+    border-radius:7px;padding:14px 16px}
+  .purpose .lbl{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--txt-muted);margin-bottom:5px}
+  .purpose p{color:var(--txt-dim);font-size:13px}
+  .steps{counter-reset:s;display:grid;gap:9px}
+  .steps .step{display:grid;grid-template-columns:26px 1fr;gap:11px;align-items:start;
+    background:var(--panel);border:1px solid var(--border-dd);border-radius:7px;padding:11px 13px}
+  .steps .step::before{counter-increment:s;content:counter(s);width:26px;height:26px;border-radius:50%;
+    display:grid;place-items:center;font-size:12px;font-weight:bold;background:var(--panel2);color:var(--cyan);
+    border:1px solid var(--border-d)}
+  .steps .step b{color:var(--txt)}
+  .steps .step p{color:var(--txt-dim);font-size:12.5px;margin-top:2px}
+
+  .ref{background:var(--panel);border:1px solid var(--border-dd);border-radius:7px;overflow:hidden}
+  .ref .rh{padding:9px 14px;font-size:11px;font-weight:bold;letter-spacing:.5px;border-bottom:1px solid var(--border-dd)}
+  table.ref-t{width:100%;border-collapse:collapse;font-size:12.5px}
+  table.ref-t td{padding:9px 14px;border-bottom:1px solid rgba(120,108,184,.13);vertical-align:top}
+  table.ref-t tr:last-child td{border-bottom:none}
+  table.ref-t td:first-child{width:230px;color:var(--txt);font-weight:bold}
+  table.ref-t td:first-child code{background:#0e0c22;border:1px solid var(--border-dd);border-radius:3px;
+    padding:1px 6px;font-size:11px;color:var(--cyan)}
+  table.ref-t td:last-child{color:var(--txt-dim)}
+  .note{font-size:12px;color:var(--txt-dim);background:rgba(248,208,238,.07);border:1px solid rgba(248,208,238,.28);
+    border-radius:7px;padding:11px 14px}
+  .note b{color:var(--amber)}
+
+  footer{padding:40px 30px;color:var(--txt-muted);font-size:11px;border-top:1px solid var(--border-dd);
+    max-width:1080px;margin:0 auto}
+
+  /* ── Instalación: bloques de código, OS, callouts ── */
+  .codeblock{background:#0c0a1f;border:1px solid var(--border-dd);border-radius:8px;overflow:hidden;margin:2px 0}
+  .codeblock .cbh{display:flex;align-items:center;gap:8px;background:#15122d;padding:6px 12px;
+    font-size:10px;letter-spacing:.5px;color:var(--txt-muted);border-bottom:1px solid var(--border-dd)}
+  .codeblock .cbh .dots{display:flex;gap:5px}
+  .codeblock .cbh .dots i{width:9px;height:9px;border-radius:50%;display:block}
+  .codeblock .cbh .lang{margin-left:auto;color:var(--cyan);font-weight:bold}
+  .codeblock pre{padding:12px 14px;font-size:12.5px;line-height:1.65;overflow-x:auto;white-space:pre;color:var(--txt-dim)}
+  .codeblock pre .cm{color:var(--txt-muted);font-style:italic}
+  .codeblock pre .pr{color:var(--orchid)}     /* prompt $ */
+  .codeblock pre .cmd{color:var(--lavender)}  /* comando */
+  .codeblock pre .fl{color:var(--teal)}       /* flags / args */
+  .codeblock pre .ok{color:var(--emerald)}
+  .codeblock pre .st{color:var(--blush)}      /* strings */
+
+  .os-tabs{display:flex;gap:6px;flex-wrap:wrap;margin:4px 0 2px}
+  .os-tab{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:bold;padding:8px 14px;border-radius:7px 7px 0 0;
+    border:1px solid var(--border-dd);border-bottom:none;background:var(--panel);color:var(--txt-muted)}
+  .os-tab.win{color:var(--cyan);background:rgba(177,143,232,.10);border-color:rgba(177,143,232,.4)}
+  .os-tab.mac{color:var(--lavender);background:rgba(224,204,255,.10);border-color:rgba(224,204,255,.4)}
+  .os-tab.lin{color:var(--emerald);background:rgba(240,184,232,.10);border-color:rgba(240,184,232,.4)}
+  .os-pane{border:1px solid var(--border-dd);border-radius:0 8px 8px 8px;padding:13px;background:var(--panel);margin-bottom:8px}
+  .os-pane>.t{font-size:11px;color:var(--txt-muted);margin-bottom:8px}
+  .os-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;align-items:start}
+
+  .callout{border-radius:8px;padding:12px 15px;font-size:12.5px;display:grid;grid-template-columns:22px 1fr;gap:11px;align-items:start}
+  .callout .ci{font-size:16px;line-height:1.3}
+  .callout p{color:var(--txt-dim)} .callout b{color:var(--txt)}
+  .callout code{background:#0e0c22;border:1px solid var(--border-dd);border-radius:3px;padding:1px 5px;font-size:11px;color:var(--cyan)}
+  .callout.tip{background:rgba(184,232,200,.07);border:1px solid rgba(184,232,200,.3)}
+  .callout.tip .ci{color:var(--sage)}
+  .callout.warn{background:rgba(248,208,238,.07);border:1px solid rgba(248,208,238,.32)}
+  .callout.warn .ci{color:var(--amber)}
+  .callout.info{background:rgba(177,143,232,.07);border:1px solid rgba(177,143,232,.3)}
+  .callout.info .ci{color:var(--cyan)}
+
+  .reqgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:2px 0}
+  .reqcard{background:var(--panel);border:1px solid var(--border-dd);border-radius:8px;padding:12px}
+  .reqcard .rk{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--txt-muted)}
+  .reqcard .rv{font-size:15px;font-weight:bold;color:var(--txt);margin-top:3px}
+  .reqcard .rs{font-size:10px;color:var(--txt-dim);margin-top:2px}
+
+  .deptable{width:100%;border-collapse:collapse;font-size:12.5px;background:var(--panel);border-radius:8px;overflow:hidden}
+  .deptable th{text-align:left;background:rgba(255,215,0,.10);color:var(--gold);font-size:10px;letter-spacing:.5px;
+    padding:9px 13px;border-bottom:1px solid var(--border-dd)}
+  .deptable td{padding:9px 13px;border-bottom:1px solid rgba(120,108,184,.13);color:var(--txt-dim);vertical-align:top}
+  .deptable td:first-child{color:var(--txt);font-weight:bold;white-space:nowrap}
+  .deptable td code{background:#0e0c22;border:1px solid var(--border-dd);border-radius:3px;padding:1px 6px;font-size:11px;color:var(--cyan)}
+  .deptable tr:last-child td{border-bottom:none}
+  .pin{display:inline-block;font-size:9px;font-weight:bold;padding:2px 7px;border-radius:3px;margin-left:6px}
+  .pin.req{background:rgba(232,168,216,.16);color:var(--teal)}
+  .pin.opt{background:rgba(248,208,238,.16);color:var(--amber)}
+
+  @media (max-width:880px){
+    .shell{grid-template-columns:1fr}
+    nav.side{display:none}
+    main{padding:0 16px 70px}
+    .cards{grid-template-columns:repeat(2,1fr)}
+    .subgrid{grid-template-columns:1fr}
+    .reqgrid{grid-template-columns:repeat(2,1fr)}
+    .os-grid{grid-template-columns:1fr}
+    table.ref-t td:first-child{width:auto}
+  }
+</style>
+</head>
+<body>
+
+<div class="topband"><i></i><i></i><i></i><i></i></div>
+
+<header class="app">
+  <span class="dna">⬡⬢⬡</span>
+  <div>
+    <h1>IGFinder 2.0 <span class="sep">·</span></h1>
+  </div>
+  <div>
+    <div style="font-weight:bold;color:var(--txt)">Intronless Gene Architecture Analyzer</div>
+    <div class="sub">Single-Exon Gene Detection · Structural Comparative Analysis</div>
+  </div>
+  <span class="pill">MANUAL DE USO</span>
+</header>
+
+<div class="shell">
+
+  <!-- SIDEBAR — réplica de la navegación de la app -->
+  <nav class="side">
+    <div class="navlabel">Empezar</div>
+    <a class="nav" href="#install" style="color:var(--gold)">   <span class="dot"></span> ⤓ Instalación</a>
+    <div class="navlabel" style="margin-top:14px">Pestañas</div>
+    <a class="nav" href="#scan"    style="color:var(--teal)">    <span class="dot"></span> ✿ Scan</a>
+    <a class="nav" href="#config"  style="color:var(--blush)">   <span class="dot"></span> ⚙ Config</a>
+    <a class="nav" href="#monitor" style="color:var(--orchid)">  <span class="dot"></span> ⊙ Monitor</a>
+    <a class="nav" href="#omics"   style="color:var(--emerald)"> <span class="dot"></span> ⬡ OMICS</a>
+    <a class="nav" href="#cross"   style="color:var(--cyan)">    <span class="dot"></span> ⬢ Cross Species</a>
+    <a class="nav" href="#plots"   style="color:var(--violet)">  <span class="dot"></span> ◈ Plots</a>
+    <a class="nav" href="#results" style="color:var(--lavender)"><span class="dot"></span> ✦ Results</a>
+    <a class="nav" href="#log"     style="color:var(--cyan)">    <span class="dot"></span> ◉ Log</a>
+    <div class="navlabel" style="margin-top:14px">Referencia</div>
+    <a class="nav" href="#top" style="color:var(--txt-muted)"><span class="dot"></span> ↑ Inicio</a>
+  </nav>
+
+  <main id="top">
+
+    <!-- INTRO -->
+    <div class="intro">
+      <div class="eyebrow">Genómica comparativa · Detección de genes sin intrones</div>
+      <h2>Manual de uso, pestaña por pestaña<br>de <em>IGFinder 2.0</em></h2>
+      <p>IGFinder analiza la arquitectura de genes para detectar <b>genes sin intrones (IG)</b>, los separa de los <b>genes multi-exón (MEG)</b> y los <b>genes con intrones solo en UTR (ui-SEG)</b>, y los compara entre genomas usando la API REST de Ensembl y Ensembl Compara.</p>
+      <p>La ventana se organiza en <b>ocho pestañas</b>. Este manual abre con una guía de <b>instalación desde cero</b> y luego reproduce la interfaz de cada pestaña con su misma paleta y tipografía, explicando para qué sirve, cómo se usa y qué hace cada control.</p>
+      <div class="legend">
+        <span class="chip"><b>IG</b> · Intronless Gene (sin intrones)</span>
+        <span class="chip"><b>MEG</b> · Multi-Exon Gene</span>
+        <span class="chip"><b>ui-SEG</b> · UTR-intronless Single-Exon Gene</span>
+        <span class="chip">Fuente: <b>Ensembl REST</b> + <b>Compara</b></span>
+        <span class="chip">Ventana base <b>1200×780</b></span>
+      </div>
+    </div>
+
+
+    <!-- ════════════════════ 0 · INSTALACIÓN ════════════════════ -->
+    <section class="tab" id="install" style="border-top:none;margin-top:10px">
+      <div class="tabhead">
+        <div class="ic" style="background:rgba(255,215,0,.14);color:var(--gold)">⤓</div>
+        <div class="meta">
+          <div class="kicker" style="color:var(--gold)">Antes de empezar · Instalación desde cero</div>
+          <h3>Instalación — De un equipo limpio a IGFinder corriendo</h3>
+          <div class="lede">Guía paso a paso para Windows, macOS y Linux: Python, entorno virtual, dependencias y primer arranque.</div>
+        </div>
+      </div>
+
+      <div class="callout info" style="margin-top:10px">
+        <span class="ci">◈</span>
+        <p><b>En resumen.</b> IGFinder es un programa de escritorio en <b>Python 3</b> con interfaz <b>Tkinter</b>. Para usarlo necesitas: (1) Python 3.9+ con Tkinter, (2) las cinco librerías base <code>requests pandas matplotlib numpy scipy</code>, y (3) lanzar el archivo <code>IGFinder_FINAL_1_6.py</code>. Todo lo demás (Cython, NTv3) es opcional y mejora el rendimiento o añade funciones. Necesitas <b>conexión a internet</b>: el programa consulta la API REST de Ensembl en vivo.</p>
+      </div>
+
+      <!-- ── Requisitos ── -->
+      <div class="blocklabel">Requisitos del sistema</div>
+      <div class="reqgrid">
+        <div class="reqcard"><div class="rk">Python</div><div class="rv">3.9 – 3.12</div><div class="rs">con Tkinter incluido</div></div>
+        <div class="reqcard"><div class="rk">RAM</div><div class="rv">4 GB mínimo</div><div class="rs">8 GB+ recomendado</div></div>
+        <div class="reqcard"><div class="rk">Disco</div><div class="rv">~1 GB</div><div class="rs">+2–3 GB si usas NTv3</div></div>
+        <div class="reqcard"><div class="rk">Red</div><div class="rv">Internet</div><div class="rs">API Ensembl en vivo</div></div>
+      </div>
+      <div class="callout warn">
+        <span class="ci">⚠</span>
+        <p><b>Tkinter es obligatorio y no siempre viene con Python.</b> En Windows y macOS suele incluirse en el instalador oficial de python.org. En Linux casi siempre hay que instalarlo aparte (<code>python3-tk</code>). Más abajo se indica cómo en cada sistema. Sin Tkinter, el programa no abre ninguna ventana.</p>
+      </div>
+
+      <!-- ── PASO 1 · Python ── -->
+      <div class="blocklabel">Paso 1 · Instalar Python (con Tkinter)</div>
+      <div class="os-tabs">
+        <div class="os-tab win">⊞ Windows</div>
+        <div class="os-tab mac"> macOS</div>
+        <div class="os-tab lin">🐧 Linux</div>
+      </div>
+      <div class="os-grid">
+        <div class="os-pane">
+          <div class="t" style="color:var(--cyan)">⊞ Windows 10 / 11</div>
+          <p style="font-size:12px;color:var(--txt-dim);margin-bottom:8px">Descarga el instalador desde <b>python.org/downloads</b>. Durante la instalación marca <b>«Add python.exe to PATH»</b> y deja activado <b>«tcl/tk and IDLE»</b> (es Tkinter).</p>
+          <div class="codeblock"><div class="cbh"><span class="dots"><i style="background:var(--mac_red,#ff5f57)"></i><i style="background:var(--gold)"></i><i style="background:var(--emerald)"></i></span> PowerShell <span class="lang">verificar</span></div>
+<pre><span class="pr">PS&gt;</span> <span class="cmd">python</span> <span class="fl">--version</span>
+<span class="ok">Python 3.12.x</span>
+<span class="pr">PS&gt;</span> <span class="cmd">python</span> <span class="fl">-m tkinter</span>
+<span class="cm"># abre una ventanita = Tkinter OK</span></pre></div>
+        </div>
+        <div class="os-pane">
+          <div class="t" style="color:var(--lavender)"> macOS 12+</div>
+          <p style="font-size:12px;color:var(--txt-dim);margin-bottom:8px">Usa el instalador de <b>python.org</b> (trae Tkinter), o Homebrew. Con Homebrew, instala también <code>python-tk</code>.</p>
+          <div class="codeblock"><div class="cbh"><span class="dots"><i style="background:#ff5f57"></i><i style="background:var(--gold)"></i><i style="background:var(--emerald)"></i></span> Terminal <span class="lang">Homebrew</span></div>
+<pre><span class="pr">$</span> <span class="cmd">brew install</span> <span class="fl">python python-tk</span>
+<span class="pr">$</span> <span class="cmd">python3</span> <span class="fl">--version</span>
+<span class="ok">Python 3.12.x</span>
+<span class="pr">$</span> <span class="cmd">python3</span> <span class="fl">-m tkinter</span>
+<span class="cm"># ventana de prueba = OK</span></pre></div>
+        </div>
+        <div class="os-pane">
+          <div class="t" style="color:var(--emerald)">🐧 Linux (Debian/Ubuntu)</div>
+          <p style="font-size:12px;color:var(--txt-dim);margin-bottom:8px">Instala Python, pip, venv y <b>Tkinter</b> desde el gestor de paquetes. En Fedora usa <code>dnf install python3 python3-tkinter</code>.</p>
+          <div class="codeblock"><div class="cbh"><span class="dots"><i style="background:#ff5f57"></i><i style="background:var(--gold)"></i><i style="background:var(--emerald)"></i></span> bash <span class="lang">apt</span></div>
+<pre><span class="pr">$</span> <span class="cmd">sudo apt update</span>
+<span class="pr">$</span> <span class="cmd">sudo apt install</span> <span class="fl">python3 python3-pip \
+        python3-venv python3-tk</span>
+<span class="pr">$</span> <span class="cmd">python3</span> <span class="fl">-m tkinter</span>
+<span class="cm"># ventana de prueba = OK</span></pre></div>
+        </div>
+      </div>
+
+      <!-- ── PASO 2 · entorno virtual ── -->
+      <div class="blocklabel">Paso 2 · Crear un entorno virtual (recomendado)</div>
+      <div class="callout tip">
+        <span class="ci">✓</span>
+        <p>Un <b>entorno virtual</b> aísla las librerías de IGFinder del resto del sistema, así nada se rompe ni entra en conflicto. Crea una carpeta para el proyecto, pon ahí <code>IGFinder_FINAL_1_6.py</code> y crea el entorno dentro.</p>
+      </div>
+      <div class="os-grid">
+        <div class="os-pane">
+          <div class="t" style="color:var(--cyan)">⊞ Windows · PowerShell</div>
+          <div class="codeblock"><div class="cbh"><span class="dots"><i style="background:#ff5f57"></i><i style="background:var(--gold)"></i><i style="background:var(--emerald)"></i></span> PowerShell <span class="lang">venv</span></div>
+<pre><span class="pr">PS&gt;</span> <span class="cmd">cd</span> <span class="fl">C:\IGFinder</span>
+<span class="pr">PS&gt;</span> <span class="cmd">python</span> <span class="fl">-m venv .venv</span>
+<span class="pr">PS&gt;</span> <span class="cmd">.\.venv\Scripts\Activate.ps1</span>
+<span class="ok">(.venv) PS&gt;</span> <span class="cm"># entorno activo</span></pre></div>
+          <p class="hint" style="margin-top:6px">Si PowerShell bloquea el script: <code style="font-size:10px">Set-ExecutionPolicy -Scope CurrentUser RemoteSigned</code></p>
+        </div>
+        <div class="os-pane">
+          <div class="t" style="color:var(--lavender)"> macOS / 🐧 Linux · Terminal</div>
+          <div class="codeblock"><div class="cbh"><span class="dots"><i style="background:#ff5f57"></i><i style="background:var(--gold)"></i><i style="background:var(--emerald)"></i></span> bash <span class="lang">venv</span></div>
+<pre><span class="pr">$</span> <span class="cmd">cd</span> <span class="fl">~/IGFinder</span>
+<span class="pr">$</span> <span class="cmd">python3</span> <span class="fl">-m venv .venv</span>
+<span class="pr">$</span> <span class="cmd">source</span> <span class="fl">.venv/bin/activate</span>
+<span class="ok">(.venv) $</span> <span class="cm"># entorno activo</span></pre></div>
+          <p class="hint" style="margin-top:6px">Para salir del entorno en cualquier momento: <code>deactivate</code></p>
+        </div>
+      </div>
+
+      <!-- ── PASO 3 · dependencias ── -->
+      <div class="blocklabel">Paso 3 · Instalar las dependencias</div>
+      <p style="color:var(--txt-dim);font-size:13px;margin-bottom:4px">Con el entorno activo (verás <code style="background:#0e0c22;border:1px solid var(--border-dd);padding:1px 5px;border-radius:3px;color:var(--cyan)">(.venv)</code> al inicio del prompt), instala primero las <b>cinco librerías obligatorias</b>. Es lo único que el programa necesita para arrancar.</p>
+      <div class="codeblock"><div class="cbh"><span class="dots"><i style="background:#ff5f57"></i><i style="background:var(--gold)"></i><i style="background:var(--emerald)"></i></span> Dependencias base <span class="lang">obligatorio</span></div>
+<pre><span class="pr">(.venv) $</span> <span class="cmd">python -m pip install</span> <span class="fl">--upgrade pip</span>
+<span class="pr">(.venv) $</span> <span class="cmd">pip install</span> <span class="fl">requests pandas matplotlib numpy scipy</span></pre></div>
+
+      <p style="color:var(--txt-dim);font-size:13px;margin:14px 0 4px">Opcional · acelera el módulo OMICS compilando rutinas con <b>Cython</b>:</p>
+      <div class="codeblock"><div class="cbh"><span class="dots"><i style="background:#ff5f57"></i><i style="background:var(--gold)"></i><i style="background:var(--emerald)"></i></span> Aceleración <span class="lang">opcional</span></div>
+<pre><span class="pr">(.venv) $</span> <span class="cmd">pip install</span> <span class="fl">cython</span>
+<span class="cm"># Sin Cython el programa funciona igual (modo fallback en Python puro,</span>
+<span class="cm"># un poco más lento). CONFIG &gt; SYSTEM INFO indica si está activo.</span></pre></div>
+
+      <p style="color:var(--txt-dim);font-size:13px;margin:14px 0 4px">Opcional · embeddings <b>NTv3</b> (Nucleotide Transformer). Solo si quieres activar el toggle «NTv3 EMBEDDINGS» de SCAN:</p>
+      <div class="codeblock"><div class="cbh"><span class="dots"><i style="background:#ff5f57"></i><i style="background:var(--gold)"></i><i style="background:var(--emerald)"></i></span> NTv3 (IA de ADN) <span class="lang">opcional</span></div>
+<pre><span class="pr">(.venv) $</span> <span class="cmd">pip install</span> <span class="fl">torch transformers huggingface_hub</span>
+<span class="cm"># El modelo (~1–2 GB) se descarga solo la primera vez desde HuggingFace.</span>
+<span class="cm"># Si NTv3 falla o no está, el pipeline continúa sin interrupción.</span></pre></div>
+
+      <div class="callout tip" style="margin-top:10px">
+        <span class="ci">✓</span>
+        <p><b>Atajo: archivo <code>requirements.txt</code>.</b> Crea un archivo con las dependencias y instálalas todas de una vez con <code>pip install -r requirements.txt</code>. Tienes el contenido listo en el bloque «Referencia» al final de esta pestaña.</p>
+      </div>
+
+      <!-- ── Tabla de dependencias ── -->
+      <div class="blocklabel">Qué hace cada dependencia</div>
+      <table class="deptable">
+        <tr><th>Paquete</th><th>Para qué sirve en IGFinder</th></tr>
+        <tr><td>requests <span class="pin req">req</span></td><td>Consultas HTTP a la API REST de Ensembl y a Ensembl Compara (descarga de genes, transcritos y ortólogos).</td></tr>
+        <tr><td>pandas <span class="pin req">req</span></td><td>Tablas de genes y matrices de conservación; alimenta RESULTS, OMICS y CROSS SPECIES, y los TSV de salida.</td></tr>
+        <tr><td>numpy <span class="pin req">req</span></td><td>Cálculo vectorizado que sostiene clasificación y matrices.</td></tr>
+        <tr><td>matplotlib <span class="pin req">req</span></td><td>Todas las gráficas (PLOTS) y las figuras embebidas de OMICS/CROSS. Usa el backend Agg, seguro entre hilos.</td></tr>
+        <tr><td>scipy <span class="pin req">req</span></td><td>Pruebas estadísticas: Fisher, χ², Mann-Whitney U, Welch t, hipergeométrica (enriquecimiento y reportes).</td></tr>
+        <tr><td>tkinter <span class="pin req">req</span></td><td>La interfaz gráfica completa. Viene con Python en Win/Mac; en Linux se instala como <code>python3-tk</code>.</td></tr>
+        <tr><td>cython <span class="pin opt">opc</span></td><td>Compila rutinas de álgebra del módulo OMICS para mayor velocidad. Sin él, funciona en modo Python puro.</td></tr>
+        <tr><td>torch · transformers · huggingface_hub <span class="pin opt">opc</span></td><td>Motor NTv3: representación semántica del ADN. Descarga el modelo bajo demanda; totalmente opcional.</td></tr>
+      </table>
+
+      <!-- ── PASO 4 · ejecutar ── -->
+      <div class="blocklabel">Paso 4 · Ejecutar IGFinder</div>
+      <p style="color:var(--txt-dim);font-size:13px;margin-bottom:4px">Hay dos formas de arrancar. La más simple es ejecutarlo como script: abre la ventana directamente.</p>
+      <div class="os-grid" style="grid-template-columns:1fr 1fr">
+        <div class="os-pane">
+          <div class="t" style="color:var(--emerald)">Opción A · como script (recomendada)</div>
+          <div class="codeblock"><div class="cbh"><span class="dots"><i style="background:#ff5f57"></i><i style="background:var(--gold)"></i><i style="background:var(--emerald)"></i></span> terminal <span class="lang">ejecutar</span></div>
+<pre><span class="pr">(.venv) $</span> <span class="cmd">python</span> <span class="fl">IGFinder_FINAL_1_6.py</span>
+<span class="ok">INFO  ▶  Ventana IGFinder 2.0 abierta</span></pre></div>
+          <p style="font-size:11.5px;color:var(--txt-dim);margin-top:6px">Se abre la ventana 1200×780 directamente en la pestaña SCAN. Ciérrala para terminar.</p>
+        </div>
+        <div class="os-pane">
+          <div class="t" style="color:var(--lavender)">Opción B · desde Jupyter / notebook</div>
+          <div class="codeblock"><div class="cbh"><span class="dots"><i style="background:#ff5f57"></i><i style="background:var(--gold)"></i><i style="background:var(--emerald)"></i></span> Jupyter <span class="lang">celdas</span></div>
+<pre><span class="cm">In [1]:</span> <span class="cmd">%run</span> <span class="fl">IGFinder_FINAL_1_6.py</span>
+<span class="cm">In [2]:</span> <span class="cmd">launch()</span>    <span class="cm"># abre la ventana</span>
+<span class="cm">In [3]:</span> <span class="cmd">shutdown()</span> <span class="cm"># la cierra</span></pre></div>
+          <p style="font-size:11.5px;color:var(--txt-dim);margin-top:6px"><code style="font-size:10px">launch()</code> abre la GUI en un hilo aparte y deja libre el kernel de Jupyter.</p>
+        </div>
+      </div>
+
+      <div class="callout info" style="margin-top:10px">
+        <span class="ci">◎</span>
+        <p><b>Primer escaneo de prueba.</b> Con la ventana abierta, deja <code>homo_sapiens</code> en SCAN, activa <b>«Autosomes only»</b> y pulsa <b>INITIATE STRUCTURAL GENOME SCAN</b>. Una corrida de autosomas tarda ~5–10 min y, al terminar, se guarda el TSV en la carpeta de salida. Sigue el avance en MONITOR y LOG.</p>
+      </div>
+
+      <!-- ── Verificación ── -->
+      <div class="blocklabel">Verificación rápida de la instalación</div>
+      <div class="codeblock"><div class="cbh"><span class="dots"><i style="background:#ff5f57"></i><i style="background:var(--gold)"></i><i style="background:var(--emerald)"></i></span> comprobar dependencias <span class="lang">python</span></div>
+<pre><span class="pr">(.venv) $</span> <span class="cmd">python -c</span> <span class="st">"import requests, pandas, numpy, scipy, matplotlib, tkinter; print('Todo OK')"</span>
+<span class="ok">Todo OK</span></pre></div>
+      <p style="font-size:12px;color:var(--txt-dim);margin-top:6px">Si esa línea imprime <span style="color:var(--emerald);font-weight:bold">Todo OK</span> sin errores, ya puedes ejecutar el programa. Cualquier <code style="background:#0e0c22;border:1px solid var(--border-dd);padding:1px 5px;border-radius:3px;color:var(--red)">ModuleNotFoundError</code> indica qué paquete falta por instalar.</p>
+
+      <!-- ── Solución de problemas ── -->
+      <div class="blocklabel">Solución de problemas frecuentes</div>
+      <div class="ref">
+        <div class="rh" style="color:var(--gold)">Problema → Solución</div>
+        <table class="ref-t">
+          <tr><td><code>ModuleNotFoundError: No module named '_tkinter'</code></td><td>Falta Tkinter. Linux: <code>sudo apt install python3-tk</code>. macOS con Homebrew: <code>brew install python-tk</code>. Windows: reinstala Python marcando «tcl/tk and IDLE».</td></tr>
+          <tr><td>No se abre ninguna ventana</td><td>Comprueba Tkinter con <code>python -m tkinter</code>. En servidores sin pantalla (SSH) no hay entorno gráfico: ejecútalo en una sesión de escritorio.</td></tr>
+          <tr><td><code>pip: command not found</code> / pip desactualizado</td><td>Usa <code>python -m pip ...</code> y actualiza con <code>python -m pip install --upgrade pip</code>.</td></tr>
+          <tr><td>PowerShell no deja activar el venv</td><td>Ejecuta una vez <code>Set-ExecutionPolicy -Scope CurrentUser RemoteSigned</code> y vuelve a activar.</td></tr>
+          <tr><td>Errores de red / timeouts al escanear</td><td>El programa depende de la API de Ensembl en vivo. Revisa tu conexión y sube TIMEOUT y API RETRIES en CONFIG ante una red lenta.</td></tr>
+          <tr><td>La ventana se ve cortada o muy grande</td><td>Ve a CONFIG → DISPLAY y pulsa AUTO-FIT, o marca el auto-ajuste en cada inicio.</td></tr>
+          <tr><td>NTv3 marca ERROR o LOADING permanente</td><td>Es opcional: el resto funciona igual. Para activarlo instala <code>torch transformers huggingface_hub</code> y deja que descargue el modelo la primera vez.</td></tr>
+          <tr><td>Las gráficas no se generan</td><td>Verifica matplotlib y que «Skip PNG plots» esté desactivado en SCAN.</td></tr>
+        </table>
+      </div>
+
+      <!-- ── requirements.txt ── -->
+      <div class="blocklabel">Referencia · contenido de requirements.txt</div>
+      <div class="codeblock"><div class="cbh"><span class="dots"><i style="background:#ff5f57"></i><i style="background:var(--gold)"></i><i style="background:var(--emerald)"></i></span> requirements.txt <span class="lang">copiar</span></div>
+<pre><span class="cm"># ── IGFinder 2.0 · dependencias obligatorias ──</span>
+requests
+pandas
+numpy
+scipy
+matplotlib
+
+<span class="cm"># ── Opcionales (descomenta para activar) ──</span>
+<span class="cm"># cython              # acelera el módulo OMICS</span>
+<span class="cm"># torch               # motor NTv3</span>
+<span class="cm"># transformers        # motor NTv3</span>
+<span class="cm"># huggingface_hub     # descarga del modelo NTv3</span></pre></div>
+      <p style="font-size:12px;color:var(--txt-dim);margin-top:6px">Guárdalo junto al script y ejecuta <code style="background:#0e0c22;border:1px solid var(--border-dd);padding:1px 5px;border-radius:3px;color:var(--cyan)">pip install -r requirements.txt</code> con el entorno activo. (Tkinter no va aquí: se instala con el sistema, no con pip.)</p>
+
+      <div class="manual" style="margin-top:18px">
+        <div class="steps">
+          <div class="step"><div><b>Instala Python 3.9+ con Tkinter.</b><p>python.org en Windows/macOS (marca tcl/tk); en Linux añade <code>python3-tk</code>. Verifica con <code>python -m tkinter</code>.</p></div></div>
+          <div class="step"><div><b>Crea y activa un entorno virtual.</b><p>En la carpeta del proyecto: <code>python -m venv .venv</code> y actívalo.</p></div></div>
+          <div class="step"><div><b>Instala las dependencias.</b><p><code>pip install requests pandas matplotlib numpy scipy</code> (y las opcionales si las quieres).</p></div></div>
+          <div class="step"><div><b>Ejecuta el programa.</b><p><code>python IGFinder_FINAL_1_6.py</code>, o desde Jupyter con <code>%run</code> + <code>launch()</code>.</p></div></div>
+          <div class="step"><div><b>Haz un escaneo de prueba.</b><p><code>homo_sapiens</code> + «Autosomes only» + INITIATE. Continúa en la pestaña SCAN ↓ de este manual.</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════ 1 · SCAN ════════════════════ -->
+    <section class="tab" id="scan">
+      <div class="tabhead">
+        <div class="ic" style="background:rgba(232,168,216,.16);color:var(--teal)">✿</div>
+        <div class="meta">
+          <div class="kicker" style="color:var(--teal)">Pestaña 1 · Punto de partida</div>
+          <h3>SCAN — Configurar y lanzar el análisis</h3>
+          <div class="lede">Aquí defines qué genoma escanear, con qué filtros y con qué opciones, y arrancas el pipeline.</div>
+        </div>
+      </div>
+
+      <div class="blocklabel">Vista de la pestaña</div>
+      <div class="screen">
+        <div class="barrow">
+          <div class="tabbtn active" style="border-color:var(--teal);color:var(--teal)">✿ SCAN</div>
+          <div class="tabbtn">⚙ CONFIG</div><div class="tabbtn">⊙ MONITOR</div>
+          <div class="tabbtn">⬡ OMICS</div><div class="tabbtn">⬢ CROSS SPECIES</div>
+          <div class="tabbtn">◈ PLOTS</div><div class="tabbtn">✦ RESULTS</div><div class="tabbtn">◉ LOG</div>
+        </div>
+        <div class="body" style="grid-template-columns:1.1fr 1.1fr .85fr">
+
+          <!-- Columna 0 -->
+          <div style="display:grid;gap:9px">
+            <div class="pane">
+              <div class="h" style="background:rgba(177,143,232,.10);color:var(--cyan)"><span class="accent" style="background:var(--cyan)"></span>◎ TARGET ORGANISM</div>
+              <div class="bd">
+                <div class="btns" style="margin-bottom:2px">
+                  <span class="b" style="background:rgba(218,112,214,.14);border-color:rgba(218,112,214,.4);color:var(--orchid)">◯ MULTISPECIES OFF · usar ID único</span>
+                  <span class="b">⚙ CONFIGURE LIST</span>
+                </div>
+                <div class="hint">↳ activa para procesar el lote de 18 genomas · pulsa CONFIGURE para editar la lista</div>
+                <div class="field"><label>ENSEMBL SPECIES ID (production_name, minúsculas)</label><div class="input">homo_sapiens</div></div>
+                <div class="hint">↳ cualquier especie de Ensembl REST funciona · la mayúscula se corrige sola</div>
+                <label style="font-size:10px;color:var(--txt-muted)">QUICK PRESETS</label>
+                <div class="btns"><span class="b">H.sapiens</span><span class="b">M.musculus</span><span class="b">D.rerio</span></div>
+                <div class="btns">
+                  <span class="tag" style="background:rgba(177,143,232,.10);border:1px solid rgba(177,143,232,.4);color:var(--cyan)">Ensembl REST</span>
+                  <span class="tag" style="background:rgba(232,168,216,.10);border:1px solid rgba(232,168,216,.4);color:var(--teal)">GRCh38.p14</span>
+                  <span class="tag" style="background:rgba(240,184,232,.10);border:1px solid rgba(240,184,232,.4);color:var(--emerald)">v109</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="pane">
+              <div class="h" style="background:rgba(248,208,238,.10);color:var(--amber)"><span class="accent" style="background:var(--amber)"></span>⚙ GENE FILTERS</div>
+              <div class="bd">
+                <div class="field"><label>MIN GENE LENGTH (bp)</label><div class="input">200</div></div>
+                <div class="field"><label>BIOTYPES (separados por coma, vacío = todos)</label><div class="input">protein_coding</div></div>
+                <div class="field"><label>CHROMOSOMES (separados por coma, vacío = todos)</label><div class="input ph">— todos —</div></div>
+                <label style="font-size:10px;color:var(--txt-muted)">BIOTYPE PRESETS</label>
+                <div class="btns">
+                  <span class="b" style="background:rgba(248,208,238,.12);border-color:rgba(248,208,238,.4);color:var(--amber)">protein_coding</span>
+                  <span class="b" style="background:rgba(248,208,238,.12);border-color:rgba(248,208,238,.4);color:var(--amber)">lncRNA</span>
+                  <span class="b" style="background:rgba(248,208,238,.12);border-color:rgba(248,208,238,.4);color:var(--amber)">pseudogene</span>
+                  <span class="b" style="background:rgba(248,208,238,.12);border-color:rgba(248,208,238,.4);color:var(--amber)">all</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="pane">
+              <div class="h" style="background:rgba(232,168,216,.10);color:var(--teal)"><span class="accent" style="background:var(--teal)"></span>⊞ OUTPUT SETTINGS</div>
+              <div class="bd">
+                <div class="field"><label>OUTPUT DIRECTORY</label>
+                  <div style="display:flex;gap:6px"><div class="input" style="flex:1">~/igfinder_out</div><span class="b">⊞ Browse</span></div></div>
+                <div class="field"><label>FILE PREFIX</label><div class="input">IGFinder2.1.1</div></div>
+                <div class="field"><label>UTR DATA FILE (opcional)</label>
+                  <div style="display:flex;gap:6px"><div class="input ph" style="flex:1">— sin archivo —</div><span class="b">⊞ Browse</span></div></div>
+                <div class="hint">TSV: species · transcript_id · intron_type</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Columna 1 -->
+          <div style="display:grid;gap:9px">
+            <div class="pane">
+              <div class="h" style="background:rgba(212,168,240,.10);color:var(--violet)"><span class="accent" style="background:var(--violet)"></span>◈ PIPELINE OPTIONS</div>
+              <div class="bd" style="gap:0">
+                <div class="toggle"><div class="t-info"><b>Autosomes only</b><span>Restringe el escaneo a los cromosomas 1–22</span></div><div class="sw on"></div></div>
+                <div class="toggle"><div class="t-info"><b>Enrichment analysis</b><span>Test de Fisher por ventana cromosómica</span></div><div class="sw on"></div></div>
+                <div class="toggle"><div class="t-info"><b>Skip statistics</b><span>Sin p-values — ejecución más rápida</span></div><div class="sw"></div></div>
+                <div class="toggle"><div class="t-info"><b>Skip structural metrics</b><span>Desactiva el análisis de estructura de exones</span></div><div class="sw"></div></div>
+                <div class="toggle"><div class="t-info"><b>Skip PNG plots</b><span>Desactiva toda la salida de matplotlib</span></div><div class="sw"></div></div>
+                <div class="toggle"><div class="t-info"><b>GO/KEGG Enrichment</b><span>Enriquecimiento funcional (alimenta OMICS)</span></div><div class="sw on"></div></div>
+                <div class="toggle"><div class="t-info"><b>Orthology (Compara)</b><span>Conservación de ortólogos (alimenta CROSS)</span></div><div class="sw on"></div></div>
+                <div class="toggle"><div class="t-info"><b>↳ Intronless conservation</b><span>Opt-in · más lento</span></div><div class="sw"></div></div>
+                <div class="toggle"><div class="t-info"><b>NTv3 EMBEDDINGS</b><span>Nucleotide Transformer v3 — representación semántica del ADN</span></div><div class="sw on"></div></div>
+              </div>
+            </div>
+
+            <div class="pane">
+              <div class="h" style="background:rgba(212,168,240,.06);color:var(--txt-muted)">RUNTIME ESTIMATES</div>
+              <div class="bd" style="gap:5px">
+                <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--txt-dim)">● Autosomes only</span><b style="color:var(--teal)">~5–10 min</b></div>
+                <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--txt-dim)">● Full genome</span><b style="color:var(--txt-dim)">30–60 min</b></div>
+                <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--txt-dim)">● TSV auto-saved</span><b style="color:var(--emerald)">al terminar</b></div>
+                <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--txt-dim)">● Cython accel.</span><b style="color:var(--emerald)">activo</b></div>
+              </div>
+            </div>
+
+            <div class="pane">
+              <div class="h" style="background:rgba(240,184,232,.10);color:var(--emerald)"><span class="accent" style="background:var(--emerald)"></span>PIPELINE PROGRESS</div>
+              <div class="bd">
+                <div style="display:flex;justify-content:space-between;font-size:11px"><b style="color:var(--txt-dim)">AWAITING PIPELINE START</b><b style="color:var(--emerald)">—</b></div>
+                <div class="slider"><div class="track"><i style="left:0;background:var(--emerald)"></i></div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Columna 2 -->
+          <div style="display:grid;gap:9px;align-content:start">
+            <div class="card" style="background:rgba(232,168,216,.09);border:1px solid rgba(232,168,216,.33)">
+              <div class="ct" style="color:var(--teal)">INTRONLESS GENES · IG</div><div class="cv" style="color:var(--teal)">—</div>
+              <div style="font-size:9px;color:var(--txt-muted)">IG · genes clasificados</div></div>
+            <div class="card" style="background:rgba(177,143,232,.09);border:1px solid rgba(177,143,232,.33)">
+              <div class="ct" style="color:var(--cyan)">MULTI-EXON GENES · MEG</div><div class="cv" style="color:var(--cyan)">—</div>
+              <div style="font-size:9px;color:var(--txt-muted)">MEG · genes clasificados</div></div>
+            <div class="card" style="background:rgba(212,168,240,.09);border:1px solid rgba(212,168,240,.33)">
+              <div class="ct" style="color:var(--violet)">UTR-INTRONLESS · ui-SEG</div><div class="cv" style="color:var(--violet)">—</div>
+              <div style="font-size:9px;color:var(--txt-muted)">ui-SEG · genes clasificados</div></div>
+            <div class="b run">▶ INITIATE STRUCTURAL GENOME SCAN</div>
+            <div class="b stop">■ ABORT PIPELINE</div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="manual">
+        <div class="purpose" style="border-left-color:var(--teal)">
+          <div class="lbl">¿Qué hace?</div>
+          <p>Es el panel de control del análisis. Eliges la <b>especie</b> (o una lista de varias), aplicas <b>filtros</b> de longitud, biotipo y cromosoma, decides qué <b>módulos</b> ejecutar y arrancas el pipeline. Las tarjetas de la derecha cuentan en vivo cuántos genes caen en cada clase a medida que avanza el escaneo.</p>
+        </div>
+
+        <div class="blocklabel">Cómo se usa</div>
+        <div class="steps">
+          <div class="step"><div><b>Elige el organismo.</b><p>Escribe un <code>production_name</code> de Ensembl en minúsculas (p. ej. <code>homo_sapiens</code>) o pulsa un preset rápido. La mayúscula se corrige automáticamente.</p></div></div>
+          <div class="step"><div><b>(Opcional) Activa MULTISPECIES.</b><p>Para analizar muchos genomas en lote pulsa el botón <b>MULTISPECIES OFF</b> para encenderlo y abre <b>CONFIGURE LIST</b> para editar la lista (acepta más de 100 especies). En modo lote, el campo de especie única se ignora.</p></div></div>
+          <div class="step"><div><b>Define los filtros.</b><p>Ajusta la longitud mínima, los biotipos (vacío = todos) y los cromosomas. Los presets de biotipo rellenan el campo con un clic.</p></div></div>
+          <div class="step"><div><b>Configura la salida.</b><p>Elige la carpeta de destino con <b>Browse</b>, fija un prefijo de archivo y, si tienes datos de UTR, carga el TSV opcional.</p></div></div>
+          <div class="step"><div><b>Selecciona los módulos.</b><p>Activa o desactiva cada opción del pipeline. <b>GO/KEGG</b> alimenta la pestaña OMICS y <b>Orthology</b> alimenta CROSS SPECIES; desactivar plots o estadísticas acelera la corrida.</p></div></div>
+          <div class="step"><div><b>Lanza el escaneo.</b><p>Pulsa <b>INITIATE STRUCTURAL GENOME SCAN</b>. La barra de progreso y las tarjetas se actualizan en vivo; <b>ABORT PIPELINE</b> lo detiene.</p></div></div>
+        </div>
+
+        <div class="ref">
+          <div class="rh" style="color:var(--teal)">Campos y controles</div>
+          <table class="ref-t">
+            <tr><td><code>ENSEMBL SPECIES ID</code></td><td>Especie objetivo en formato production_name. Cualquier especie de Ensembl REST es válida.</td></tr>
+            <tr><td>MULTISPECIES + <code>CONFIGURE LIST</code></td><td>Procesa una lista de genomas en secuencia, cada uno en su subcarpeta. El editor permite añadir/quitar filas e importar desde texto.</td></tr>
+            <tr><td><code>MIN GENE LENGTH</code></td><td>Descarta genes más cortos que el valor en pares de bases (por defecto 200 bp).</td></tr>
+            <tr><td><code>BIOTYPES</code> / <code>CHROMOSOMES</code></td><td>Listas separadas por coma para limitar el escaneo. Vacío = sin restricción.</td></tr>
+            <tr><td><code>OUTPUT DIRECTORY / FILE PREFIX</code></td><td>Dónde y con qué nombre base se guardan TSV, PNG y reportes.</td></tr>
+            <tr><td>Toggles del pipeline</td><td>Autosomes only, Enrichment, Skip statistics / structural / plots, GO/KEGG, Orthology, conservación intronless y embeddings NTv3.</td></tr>
+            <tr><td><code>INITIATE</code> / <code>ABORT</code></td><td>Arrancan y detienen el pipeline. El progreso aparece aquí y, con más detalle, en MONITOR y LOG.</td></tr>
+          </table>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ════════════════════ 2 · CONFIG ════════════════════ -->
+    <section class="tab" id="config">
+      <div class="tabhead">
+        <div class="ic" style="background:rgba(255,179,209,.16);color:var(--blush)">⚙</div>
+        <div class="meta">
+          <div class="kicker" style="color:var(--blush)">Pestaña 2 · Ajustes avanzados</div>
+          <h3>CONFIG — Configuración avanzada</h3>
+          <div class="lede">Parámetros finos del motor, umbrales de clasificación, rendimiento y adaptación de pantalla.</div>
+        </div>
+      </div>
+
+      <div class="blocklabel">Vista de la pestaña</div>
+      <div class="screen">
+        <div class="barrow">
+          <div class="tabbtn">✿ SCAN</div>
+          <div class="tabbtn active" style="border-color:var(--blush);color:var(--blush)">⚙ CONFIG</div>
+          <div class="tabbtn">⊙ MONITOR</div><div class="tabbtn">⬡ OMICS</div><div class="tabbtn">⬢ CROSS SPECIES</div>
+          <div class="tabbtn">◈ PLOTS</div><div class="tabbtn">✦ RESULTS</div><div class="tabbtn">◉ LOG</div>
+        </div>
+        <div class="body">
+          <div style="font-size:13px;font-weight:bold;color:var(--cyan);padding:4px 2px">ADVANCED CONFIGURATION</div>
+
+          <div class="pane"><div class="h" style="color:var(--cyan)">SCAN PARAMETERS</div><div class="bd">
+            <div class="slider"><span class="lab">SCAN THREADS</span><div class="track"><i style="left:24%;background:var(--cyan)"></i></div><span class="val" style="color:var(--cyan)">4</span></div>
+            <div class="slider"><span class="lab">BATCH SIZE</span><div class="track"><i style="left:16%;background:var(--cyan)"></i></div><span class="val" style="color:var(--cyan)">200</span></div>
+            <div class="slider"><span class="lab">TIMEOUT (s)</span><div class="track"><i style="left:18%;background:var(--cyan)"></i></div><span class="val" style="color:var(--cyan)">60s</span></div>
+            <div class="slider"><span class="lab">API RETRIES</span><div class="track"><i style="left:30%;background:var(--cyan)"></i></div><span class="val" style="color:var(--cyan)">3</span></div>
+          </div></div>
+
+          <div class="pane"><div class="h" style="color:var(--teal)">CLASSIFICATION THRESHOLDS</div><div class="bd">
+            <div class="slider"><span class="lab">IG CONFIDENCE</span><div class="track"><i style="left:92%;background:var(--teal)"></i></div><span class="val" style="color:var(--teal)">95%</span></div>
+            <div class="slider"><span class="lab">MEG MIN EXONS</span><div class="track"><i style="left:4%;background:var(--teal)"></i></div><span class="val" style="color:var(--teal)">2</span></div>
+            <div class="slider"><span class="lab">FDR THRESHOLD</span><div class="track"><i style="left:24%;background:var(--teal)"></i></div><span class="val" style="color:var(--teal)">0.05</span></div>
+          </div></div>
+
+          <div class="pane"><div class="h" style="color:var(--amber)">PERFORMANCE</div><div class="bd">
+            <div class="slider"><span class="lab">CACHE SIZE (MB)</span><div class="track"><i style="left:23%;background:var(--amber)"></i></div><span class="val" style="color:var(--amber)">512</span></div>
+            <div class="slider"><span class="lab">LOG VERBOSITY</span><div class="track"><i style="left:33%;background:var(--amber)"></i></div><span class="val" style="color:var(--amber)">NORMAL</span></div>
+          </div></div>
+
+          <div class="pane"><div class="h" style="color:var(--violet)">SYSTEM INFO</div><div class="bd btns">
+            <span class="tag" style="background:rgba(177,143,232,.10);border:1px solid rgba(177,143,232,.4);color:var(--cyan)">scipy</span>
+            <span class="tag" style="background:rgba(232,168,216,.10);border:1px solid rgba(232,168,216,.4);color:var(--teal)">pandas</span>
+            <span class="tag" style="background:rgba(212,168,240,.10);border:1px solid rgba(212,168,240,.4);color:var(--violet)">numpy</span>
+            <span class="tag" style="background:rgba(248,208,238,.10);border:1px solid rgba(248,208,238,.4);color:var(--amber)">matplotlib</span>
+            <span class="tag" style="background:rgba(177,143,232,.10);border:1px solid rgba(177,143,232,.4);color:var(--cyan)">Ensembl REST v16</span>
+            <span class="tag" style="background:rgba(240,184,232,.10);border:1px solid rgba(240,184,232,.4);color:var(--emerald)">NTv3 · CPU</span>
+          </div></div>
+
+          <div class="pane"><div class="h" style="color:var(--rose)">DISPLAY / SCREEN ADAPTATION</div><div class="bd">
+            <div style="font-size:11px;color:var(--txt-dim)">Pantalla 1920×1080 · ventana actual 1200×780</div>
+            <div class="btns">
+              <span class="b" style="background:rgba(255,133,192,.14);border-color:rgba(255,133,192,.4);color:var(--rose);font-weight:bold">⤢ AUTO-FIT TO SCREEN</span>
+              <span class="b" style="background:rgba(212,168,240,.14);border-color:rgba(212,168,240,.4);color:var(--violet);font-weight:bold">▭ MAXIMIZE</span>
+              <span class="b" style="background:rgba(177,143,232,.14);border-color:rgba(177,143,232,.4);color:var(--cyan);font-weight:bold">⟲ RESET DEFAULT</span>
+            </div>
+            <div style="font-size:11px;color:var(--txt-dim)">☐ Aplicar AUTO-FIT automáticamente en cada inicio</div>
+            <div class="hint">IGFinder detecta el tamaño de pantalla al iniciar y ajusta la ventana cuando 1200×780 no cabe.</div>
+          </div></div>
+        </div>
+      </div>
+
+      <div class="manual">
+        <div class="purpose" style="border-left-color:var(--blush)">
+          <div class="lbl">¿Qué hace?</div>
+          <p>Reúne los ajustes finos que no necesitas tocar en cada corrida: cuántos hilos y reintentos usa el motor, qué tan estricta es la clasificación de genes, cuánta memoria de caché reservar y cómo debe encajar la ventana en tu pantalla. También muestra qué librerías están activas.</p>
+        </div>
+
+        <div class="blocklabel">Cómo se usa</div>
+        <div class="steps">
+          <div class="step"><div><b>Ajusta el rendimiento del escaneo.</b><p>En <b>SCAN PARAMETERS</b> arrastra los deslizadores de hilos, tamaño de lote, timeout y reintentos según tu conexión y CPU.</p></div></div>
+          <div class="step"><div><b>Calibra la clasificación.</b><p>En <b>CLASSIFICATION THRESHOLDS</b> define la confianza mínima para marcar un gen como IG, el número mínimo de exones para MEG y el umbral FDR de los tests estadísticos.</p></div></div>
+          <div class="step"><div><b>Gestiona memoria y registro.</b><p>En <b>PERFORMANCE</b> sube o baja la caché y el nivel de detalle del log (SILENT → DEBUG).</p></div></div>
+          <div class="step"><div><b>Adapta la ventana.</b><p>Usa <b>AUTO-FIT</b>, <b>MAXIMIZE</b> o <b>RESET DEFAULT</b>, y marca la casilla para que el ajuste se aplique en cada inicio.</p></div></div>
+        </div>
+
+        <div class="ref">
+          <div class="rh" style="color:var(--blush)">Controles</div>
+          <table class="ref-t">
+            <tr><td><code>SCAN THREADS</code> · 1–16</td><td>Número de descargas/cómputos en paralelo. Más hilos = más rápido, pero más carga sobre la API.</td></tr>
+            <tr><td><code>BATCH SIZE</code> · 50–1000</td><td>Genes por lote enviados a Ensembl.</td></tr>
+            <tr><td><code>TIMEOUT / API RETRIES</code></td><td>Tiempo máximo por petición y número de reintentos ante un fallo de red.</td></tr>
+            <tr><td><code>IG CONFIDENCE</code> · 0–100%</td><td>Umbral de confianza para clasificar un gen como sin intrones.</td></tr>
+            <tr><td><code>MEG MIN EXONS</code> · 2–20</td><td>Exones mínimos para considerar un gen multi-exón.</td></tr>
+            <tr><td><code>FDR THRESHOLD</code></td><td>Tasa de falsos descubrimientos para los tests de enriquecimiento.</td></tr>
+            <tr><td><code>CACHE SIZE / LOG VERBOSITY</code></td><td>Memoria de caché en MB y verbosidad del registro (SILENT, NORMAL, VERBOSE, DEBUG).</td></tr>
+            <tr><td>SYSTEM INFO</td><td>Insignias de solo lectura con las librerías y versiones detectadas, incluido el estado de NTv3.</td></tr>
+            <tr><td>DISPLAY / SCREEN</td><td>AUTO-FIT, MAXIMIZE, RESET DEFAULT y la preferencia de auto-ajuste persistente al iniciar.</td></tr>
+          </table>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ════════════════════ 3 · MONITOR ════════════════════ -->
+    <section class="tab" id="monitor">
+      <div class="tabhead">
+        <div class="ic" style="background:rgba(218,112,214,.16);color:var(--orchid)">⊙</div>
+        <div class="meta">
+          <div class="kicker" style="color:var(--orchid)">Pestaña 3 · Vigilancia en tiempo real</div>
+          <h3>MONITOR — Centro de inteligencia del genoma</h3>
+          <div class="lede">Tablero de control en vivo: radar de cromosomas, métricas del sistema y flujo de actividad del pipeline.</div>
+        </div>
+      </div>
+
+      <div class="blocklabel">Vista de la pestaña</div>
+      <div class="screen">
+        <div class="barrow">
+          <div class="tabbtn">✿ SCAN</div><div class="tabbtn">⚙ CONFIG</div>
+          <div class="tabbtn active" style="border-color:var(--orchid);color:var(--orchid)">⊙ MONITOR</div>
+          <div class="tabbtn">⬡ OMICS</div><div class="tabbtn">⬢ CROSS SPECIES</div>
+          <div class="tabbtn">◈ PLOTS</div><div class="tabbtn">✦ RESULTS</div><div class="tabbtn">◉ LOG</div>
+        </div>
+        <div class="body">
+          <div class="pane" style="background:#0e0c22">
+            <div class="h" style="color:var(--lavender);font-size:10px">◈ IGFinder 2.0 · STRATEGIC GENOME INTELLIGENCE CENTER · REAL-TIME SURVEILLANCE
+              <span style="margin-left:auto;color:var(--emerald)">● SURVEILLANCE</span></div>
+          </div>
+          <div class="body" style="grid-template-columns:1fr 1fr 1fr;padding:0">
+
+            <!-- CHROMOSCOPE -->
+            <div class="pane"><div class="h" style="color:var(--teal)"><span class="accent" style="background:var(--teal)"></span>◉ CHROMOSCOPE · GENOME SCAN RADAR</div>
+              <div class="bd">
+                <div class="ph-box" style="min-height:120px">◉ Radar de cobertura cromosómica
+proporcional · densidad génica</div>
+                <div style="font-size:9px;color:var(--txt-muted)">CHROMOSOME STATUS · SCAN COMPLETION</div>
+                <div class="chrgrid">
+                  <div class="cc">1</div><div class="cc">2</div><div class="cc">3</div><div class="cc">4</div>
+                  <div class="cc">5</div><div class="cc">6</div><div class="cc">7</div><div class="cc">8</div>
+                  <div class="cc">9</div><div class="cc">10</div><div class="cc">11</div><div class="cc">12</div>
+                  <div class="cc">13</div><div class="cc">14</div><div class="cc">15</div><div class="cc">16</div>
+                  <div class="cc">17</div><div class="cc">18</div><div class="cc">19</div><div class="cc">20</div>
+                  <div class="cc">21</div><div class="cc">22</div><div class="cc">X</div><div class="cc">Y</div>
+                </div>
+              </div></div>
+
+            <!-- SYSTEM METRICS -->
+            <div class="pane"><div class="h" style="color:var(--cyan)"><span class="accent" style="background:var(--cyan)"></span>⬡ SYSTEM METRICS · PIPELINE STATE</div>
+              <div class="bd">
+                <div style="font-size:9px;color:var(--txt-muted);text-align:center">SYS · IG · MEG LOAD MONITOR</div>
+                <div class="dial"><div class="inner"><b>IDLE</b><span>load</span></div></div>
+                <div style="font-size:9px;color:var(--txt-muted)">STATISTICAL SUMMARY</div>
+                <div style="display:grid;gap:3px;font-size:11px">
+                  <div style="display:flex;justify-content:space-between"><span style="color:var(--txt-muted)">IG genes</span><b style="color:var(--teal)">—</b></div>
+                  <div style="display:flex;justify-content:space-between"><span style="color:var(--txt-muted)">MEG genes</span><b style="color:var(--cyan)">—</b></div>
+                  <div style="display:flex;justify-content:space-between"><span style="color:var(--txt-muted)">ui-SEG</span><b style="color:var(--violet)">—</b></div>
+                  <div style="display:flex;justify-content:space-between"><span style="color:var(--txt-muted)">Welch t / p</span><b style="color:var(--amber)">—</b></div>
+                  <div style="display:flex;justify-content:space-between"><span style="color:var(--txt-muted)">Cliff's δ</span><b style="color:var(--txt-dim)">—</b></div>
+                  <div style="display:flex;justify-content:space-between"><span style="color:var(--txt-muted)">χ² / FDR (BH)</span><b style="color:var(--amber)">—</b></div>
+                </div>
+              </div></div>
+
+            <!-- PIPELINE ACTIVITY -->
+            <div class="pane"><div class="h" style="color:var(--emerald)"><span class="accent" style="background:var(--emerald)"></span>▸ PIPELINE ACTIVITY · COMPUTATION STREAM</div>
+              <div class="bd">
+                <div style="font-size:9px;color:var(--txt-muted)">MATRIX · THREAD ACTIVITY</div>
+                <div class="ph-box" style="min-height:80px">▸ Matriz de actividad
+por hilo</div>
+                <div style="font-size:9px;color:var(--txt-muted)">LIVE OPERATION LOG · REAL-TIME FEED</div>
+                <div class="term" style="border:none"><pre style="padding:8px;font-size:10px"><span class="c-dim">[--:--:--]</span> <span class="c-info">esperando inicio…</span></pre></div>
+              </div></div>
+          </div>
+          <div class="pane" style="background:var(--bg2)"><div class="bd" style="display:flex;gap:14px;align-items:center;padding:8px 12px">
+            <span style="font-size:11px;color:var(--emerald);font-weight:bold">READY</span>
+            <span style="font-size:11px;color:var(--txt-muted)">Configure parameters to begin analysis</span>
+            <span style="margin-left:auto;font-size:12px;color:var(--lavender);font-weight:bold">00:00:00.0</span>
+          </div></div>
+        </div>
+      </div>
+
+      <div class="manual">
+        <div class="purpose" style="border-left-color:var(--orchid)">
+          <div class="lbl">¿Qué hace?</div>
+          <p>Es la sala de mando que observas <b>mientras corre el pipeline</b>. No tiene controles que rellenar: muestra en vivo qué cromosomas se han escaneado, la carga del sistema, el reparto IG/MEG/ui-SEG, un resumen estadístico y un registro de operaciones en tiempo real.</p>
+        </div>
+
+        <div class="blocklabel">Cómo se lee</div>
+        <div class="steps">
+          <div class="step"><div><b>Panel izquierdo · CHROMOSCOPE.</b><p>El radar dibuja la cobertura proporcional y la densidad génica por cromosoma. La rejilla 1–22, X, Y se va coloreando conforme cada cromosoma termina de escanearse.</p></div></div>
+          <div class="step"><div><b>Panel central · SYSTEM METRICS.</b><p>El dial muestra la carga (SYS/IG/MEG). Debajo, el resumen estadístico se actualiza con conteos y pruebas: Welch t, p-value, Cliff's δ, χ² y FDR.</p></div></div>
+          <div class="step"><div><b>Panel derecho · PIPELINE ACTIVITY.</b><p>La matriz refleja la actividad de los hilos y el feed en vivo va escribiendo cada operación a medida que ocurre.</p></div></div>
+          <div class="step"><div><b>Barra inferior.</b><p>Estado global (READY/RUNNING…), mensaje de fase y un cronómetro de la corrida.</p></div></div>
+        </div>
+
+        <div class="note">El MONITOR es de <b>solo lectura</b>: todo se llena automáticamente cuando lanzas el escaneo desde SCAN. Si quieres el detalle completo del registro, abre la pestaña LOG.</div>
+      </div>
+    </section>
+
+
+    <!-- ════════════════════ 4 · OMICS ════════════════════ -->
+    <section class="tab" id="omics">
+      <div class="tabhead">
+        <div class="ic" style="background:rgba(240,184,232,.16);color:var(--emerald)">⬡</div>
+        <div class="meta">
+          <div class="kicker" style="color:var(--emerald)">Pestaña 4 · Análisis funcional</div>
+          <h3>OMICS — Enriquecimiento y conservación</h3>
+          <div class="lede">Enriquecimiento GO/KEGG y conservación de ortólogos (Ensembl Compara) con seis sub-vistas independientes.</div>
+        </div>
+      </div>
+
+      <div class="blocklabel">Vista de la pestaña</div>
+      <div class="screen">
+        <div class="barrow">
+          <div class="tabbtn">✿ SCAN</div><div class="tabbtn">⚙ CONFIG</div><div class="tabbtn">⊙ MONITOR</div>
+          <div class="tabbtn active" style="border-color:var(--emerald);color:var(--emerald)">⬡ OMICS</div>
+          <div class="tabbtn">⬢ CROSS SPECIES</div>
+          <div class="tabbtn">◈ PLOTS</div><div class="tabbtn">✦ RESULTS</div><div class="tabbtn">◉ LOG</div>
+        </div>
+        <div class="body">
+
+          <!-- header band -->
+          <div class="pane" style="background:rgba(240,184,232,.06);border-color:rgba(240,184,232,.22)">
+            <div class="bd" style="padding:9px 12px;display:flex;align-items:center;gap:10px">
+              <div>
+                <div style="font-size:12px;font-weight:bold;color:var(--emerald)">⬡ OMICS ANALYSIS MODULE</div>
+                <div style="font-size:8px;color:var(--txt-muted)">Functional Enrichment · Ortholog Conservation · Ensembl Compara</div>
+              </div>
+              <span class="tag" style="margin-left:auto;background:rgba(232,168,216,.14);color:var(--teal)">species: —</span>
+              <span class="b solid run" style="padding:7px 12px">▶ RUN OMICS</span>
+              <span class="b stop" style="padding:7px 12px">■ STOP</span>
+              <span class="tag" style="background:rgba(248,208,238,.16);color:var(--amber)">○ AWAITING PIPELINE</span>
+            </div>
+          </div>
+
+          <!-- 4 stat cards -->
+          <div class="cards">
+            <div class="card" style="background:rgba(240,184,232,.09);border:1px solid rgba(240,184,232,.33)"><div class="ct" style="color:var(--emerald)">⬡ ENRICHED TERMS</div><div class="cv" style="color:var(--emerald)">—</div></div>
+            <div class="card" style="background:rgba(232,168,216,.09);border:1px solid rgba(232,168,216,.33)"><div class="ct" style="color:var(--teal)">◈ SOURCES</div><div class="cv" style="color:var(--teal)">—</div></div>
+            <div class="card" style="background:rgba(218,112,214,.09);border:1px solid rgba(218,112,214,.33)"><div class="ct" style="color:var(--orchid)">◉ IG ORTHOLOGS</div><div class="cv" style="color:var(--orchid)">—</div></div>
+            <div class="card" style="background:rgba(177,143,232,.09);border:1px solid rgba(177,143,232,.33)"><div class="ct" style="color:var(--cyan)">◆ MEAN CONSERV.</div><div class="cv" style="color:var(--cyan)">—</div></div>
+          </div>
+
+          <!-- GO/KEGG section -->
+          <div class="pane"><div class="h" style="color:var(--emerald)"><span class="accent" style="background:var(--emerald)"></span>▼ GO / KEGG Functional Enrichment
+            <span style="margin-left:auto;font-size:9px;color:var(--txt-muted);font-weight:normal">g:Profiler · Hypergeometric · BH-FDR</span></div>
+            <div class="bd">
+              <div class="btns" style="align-items:center">
+                <span style="font-size:9px;color:var(--txt-muted);font-weight:bold">SOURCES:</span>
+                <span class="tag" style="background:rgba(177,143,232,.18);color:var(--cyan)">GO:BP</span>
+                <span class="tag" style="background:rgba(232,168,216,.18);color:var(--teal)">GO:MF</span>
+                <span class="tag" style="background:rgba(240,184,232,.18);color:var(--emerald)">GO:CC</span>
+                <span class="tag" style="background:rgba(248,208,238,.18);color:var(--amber)">KEGG</span>
+                <span class="tag" style="background:rgba(218,112,214,.18);color:var(--orchid)">REAC</span>
+                <span class="tag" style="background:rgba(224,204,255,.18);color:var(--lavender)">TF</span>
+              </div>
+              <div class="slider"><span class="lab" style="width:90px">FDR cutoff:</span><div class="track"><i style="left:9%;background:var(--emerald)"></i></div><span class="val" style="color:var(--emerald)">0.05</span></div>
+              <div class="slider"><span class="lab" style="width:90px">Top N terms:</span><div class="track"><i style="left:28%;background:var(--emerald)"></i></div><span class="val" style="color:var(--emerald)">15</span></div>
+              <div class="ph-box">⬡ Los resultados de enriquecimiento funcional aparecen aquí tras el pipeline.
+Activa GO/KEGG Enrichment en SCAN y ejecuta para poblar el dot-plot.</div>
+              <div style="font-size:9px;color:var(--txt-muted)">Term Detail · 0 terms</div>
+              <table class="t"><tr><th>SRC</th><th>TERM ID</th><th>TERM NAME</th><th>FDR</th><th>N</th><th>RECALL</th></tr>
+                <tr><td colspan="6" style="text-align:center;color:var(--txt-muted)">— sin términos —</td></tr></table>
+            </div></div>
+
+          <!-- Orthology section -->
+          <div class="pane"><div class="h" style="color:var(--orchid)"><span class="accent" style="background:var(--orchid)"></span>▼ Ortholog Conservation (Ensembl Compara)
+            <span style="margin-left:auto;font-size:9px;color:var(--txt-muted);font-weight:normal">6 sub-vistas A–F</span></div>
+            <div class="bd">
+              <div class="slider"><span class="lab" style="width:130px">Min conservation:</span><div class="track"><i style="left:0;background:var(--orchid)"></i></div><span class="val" style="color:var(--orchid)">0 %</span></div>
+              <div class="btns" style="align-items:center">
+                <span style="font-size:10px;color:var(--txt-muted)">View:</span>
+                <span class="tag" style="background:rgba(218,112,214,.16);color:var(--orchid)">● Auto</span>
+                <span class="tag" style="color:var(--txt-muted)">○ Heatmap</span>
+                <span class="tag" style="color:var(--txt-muted)">○ Barplot</span>
+              </div>
+              <div class="pane" style="background:var(--panel2)"><div class="bd" style="gap:6px">
+                <div style="font-size:10px;color:var(--orchid);font-weight:bold">▼ Species — selector Ensembl Compara</div>
+                <div class="btns">
+                  <span class="b">⟳ Fetch all</span><span class="b">↻ Reset</span>
+                  <span class="b" style="flex:1;min-width:120px">+ Custom: production_name (p. ej. oryzias_latipes)</span><span class="b solid" style="background:rgba(218,112,214,.18);color:var(--orchid)">+ Add</span>
+                </div>
+              </div></div>
+              <div class="subgrid">
+                <div class="ph-box" style="border-color:rgba(218,112,214,.4)">◉ Panel A — Genes × Species Heatmap
+matriz de conservación (Ward)</div>
+                <div class="ph-box" style="border-color:rgba(177,143,232,.4)">◉ Panel B — UpSet Co-occurrence Sets
+combinaciones de ortólogos</div>
+                <div class="ph-box" style="border-color:rgba(240,184,232,.4)">◉ Panel C — Conservation by IG Family
+fracción con ortólogo por familia</div>
+                <div class="ph-box" style="border-color:rgba(255,179,209,.4)">◉ Panel D — Score Distribution / Species
+violín + strip por gen</div>
+                <div class="ph-box" style="border-color:rgba(212,168,240,.4)">◉ Panel E — Radial Conservation Map
+mapa polar por especie</div>
+                <div class="ph-box" style="border-color:rgba(248,208,238,.4)">◉ Panel F — Empirical CDF + Quartiles
+distribución acumulada</div>
+              </div>
+            </div></div>
+        </div>
+      </div>
+
+      <div class="manual">
+        <div class="purpose" style="border-left-color:var(--emerald)">
+          <div class="lbl">¿Qué hace?</div>
+          <p>Toma los genes que SCAN clasificó y responde dos preguntas: <b>¿qué funciones biológicas están enriquecidas?</b> (GO/KEGG vía g:Profiler) y <b>¿qué tan conservados están los IG entre especies?</b> (ortología vía Ensembl Compara). El resultado se muestra en un dot-plot con tabla y en seis vistas A–F de conservación.</p>
+        </div>
+
+        <div class="blocklabel">Cómo se usa</div>
+        <div class="steps">
+          <div class="step"><div><b>Ejecuta el análisis.</b><p>Con datos cargados (tras correr SCAN con GO/KEGG y Orthology activos) pulsa <b>RUN OMICS</b>. El estado pasa de «AWAITING PIPELINE» y la barra de progreso avanza. <b>STOP</b> lo cancela.</p></div></div>
+          <div class="step"><div><b>Lee las 4 tarjetas.</b><p>Términos enriquecidos, fuentes usadas, ortólogos IG y conservación media — un resumen de un vistazo.</p></div></div>
+          <div class="step"><div><b>Filtra el enriquecimiento GO/KEGG.</b><p>Enciende/apaga las fuentes (GO:BP, GO:MF, GO:CC, KEGG, REAC, TF) y mueve los deslizadores de <b>FDR cutoff</b> y <b>Top N</b>; el dot-plot y la tabla de términos se redibujan al instante.</p></div></div>
+          <div class="step"><div><b>Explora la conservación.</b><p>Ajusta <b>Min conservation</b> y elige la vista (Auto/Heatmap/Barplot). En el selector de especies puedes <b>Fetch all</b> desde Ensembl o añadir cualquier especie con <b>+ Add</b>.</p></div></div>
+          <div class="step"><div><b>Recorre las seis sub-vistas.</b><p>Cada panel A–F se colapsa, redimensiona y maximiza por separado.</p></div></div>
+        </div>
+
+        <div class="ref">
+          <div class="rh" style="color:var(--emerald)">Las seis vistas de conservación</div>
+          <table class="ref-t">
+            <tr><td><code>A</code> · Genes × Species Heatmap</td><td>Matriz de conservación gen × especie agrupada por Ward.</td></tr>
+            <tr><td><code>B</code> · UpSet Co-occurrence</td><td>Combinaciones de especies que comparten más ortólogos.</td></tr>
+            <tr><td><code>C</code> · Conservation by Family</td><td>Fracción de genes con ortólogo por familia IG.</td></tr>
+            <tr><td><code>D</code> · Score Distribution</td><td>Violín + strip de los scores por gen, por especie.</td></tr>
+            <tr><td><code>E</code> · Radial Conservation Map</td><td>Conservación media por especie en proyección polar.</td></tr>
+            <tr><td><code>F</code> · Empirical CDF + Quartiles</td><td>Distribución acumulada de los scores de los genes.</td></tr>
+          </table>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ════════════════════ 5 · CROSS SPECIES ════════════════════ -->
+    <section class="tab" id="cross">
+      <div class="tabhead">
+        <div class="ic" style="background:rgba(177,143,232,.16);color:var(--cyan)">⬢</div>
+        <div class="meta">
+          <div class="kicker" style="color:var(--cyan)">Pestaña 5 · Comparativa multi-genoma</div>
+          <h3>CROSS SPECIES — Cruce entre genomas</h3>
+          <div class="lede">Compara la conservación de los IG entre todas las especies del lote: ranking, matriz familia×especie y perfiles por clado.</div>
+        </div>
+      </div>
+
+      <div class="blocklabel">Vista de la pestaña</div>
+      <div class="screen">
+        <div class="barrow">
+          <div class="tabbtn">✿ SCAN</div><div class="tabbtn">⚙ CONFIG</div><div class="tabbtn">⊙ MONITOR</div><div class="tabbtn">⬡ OMICS</div>
+          <div class="tabbtn active" style="border-color:var(--cyan);color:var(--cyan)">⬢ CROSS SPECIES</div>
+          <div class="tabbtn">◈ PLOTS</div><div class="tabbtn">✦ RESULTS</div><div class="tabbtn">◉ LOG</div>
+        </div>
+        <div class="body">
+
+          <div class="pane" style="background:#0e0c22"><div class="h" style="color:var(--cyan)"><span class="accent" style="background:var(--cyan)"></span>⬢ CROSS SPECIES — GENOME CROSS</div></div>
+
+          <div class="note" style="margin:0">⬢ Activa <b>MULTISPECIES ON · 18 genomes</b> en la pestaña SCAN y lanza, o pulsa 🧪 TEST para previsualizar. &nbsp; <span class="b" style="display:inline-block;background:rgba(232,168,216,.14);border-color:rgba(232,168,216,.4);color:var(--teal)">⚙ Go to SCAN</span></div>
+
+          <div class="body" style="grid-template-columns:1fr 1fr;padding:0">
+            <div class="pane"><div class="h" style="color:var(--emerald)">⬢ LOAD DATA INTO CROSS SPECIES</div><div class="bd btns">
+              <span class="b solid run" style="padding:8px 12px">▶ LOAD FROM OMICS / SCAN</span>
+              <span class="b solid" style="background:rgba(177,143,232,.18);color:var(--cyan);padding:8px 12px">⬢ RUN MULTISPECIES</span>
+              <div class="hint" style="width:100%">Usa los datos activos de SCAN/OMICS (una o varias especies)</div>
+            </div></div>
+            <div class="pane"><div class="h" style="color:var(--violet)">◎ CONFIGURED LIST · vínculo vivo con CONFIGURE LIST
+              <span style="margin-left:auto;font-size:9px;color:var(--violet)">18 genomes · 6 clades · ON</span></div>
+              <div class="bd"><div style="font-size:10px;color:var(--txt-dim)">homo_sapiens · mus_musculus · rattus_norvegicus · bos_taurus · gallus_gallus · danio_rerio · drosophila_melanogaster · arabidopsis_thaliana · …</div></div></div>
+          </div>
+
+          <!-- main section -->
+          <div class="pane"><div class="h" style="color:var(--cyan)"><span class="accent" style="background:var(--cyan)"></span>▼ CROSS SPECIES ANALYSIS
+            <span style="margin-left:auto;font-size:9px;color:var(--txt-muted);font-weight:normal">① ranking · ② familia×especie · ③ clado</span></div>
+            <div class="bd">
+              <div class="cards">
+                <div class="card" style="background:rgba(177,143,232,.09);border:1px solid rgba(177,143,232,.33)"><div class="ct" style="color:var(--cyan)">◈ SPECIES COMPARED</div><div class="cv" style="color:var(--cyan)">18</div></div>
+                <div class="card" style="background:rgba(212,168,240,.09);border:1px solid rgba(212,168,240,.33)"><div class="ct" style="color:var(--violet)">◆ LINEAGES COVERED</div><div class="cv" style="color:var(--violet)">6</div></div>
+                <div class="card" style="background:rgba(218,112,214,.09);border:1px solid rgba(218,112,214,.33)"><div class="ct" style="color:var(--orchid)">◉ MOST CONSERVED GENE</div><div class="cv" style="color:var(--orchid);font-size:13px">—</div></div>
+                <div class="card" style="background:rgba(255,179,209,.09);border:1px solid rgba(255,179,209,.33)"><div class="ct" style="color:var(--blush)">▲ MEAN CONSERV.</div><div class="cv" style="color:var(--blush)">—</div></div>
+              </div>
+              <div class="pane" style="background:var(--bg2)"><div class="bd" style="flex-direction:row;flex-wrap:wrap;gap:14px;align-items:center;font-size:10px">
+                <span style="color:var(--txt-muted)">Sort: <b style="color:var(--cyan)">●conserv</b> ○ortólogos ○nombre</span>
+                <span style="color:var(--txt-muted)">Clade: <b style="color:var(--cyan)">●all</b> ○mammal ○fish …</span>
+                <span style="color:var(--txt-muted)">Min %:</span><div class="track" style="flex:1;min-width:80px"><i style="left:0;background:var(--cyan)"></i></div><b style="color:var(--cyan)">0 %</b>
+              </div></div>
+
+              <div style="font-size:10px;color:var(--cyan)">▼ ① Species Conservation Ranking</div>
+              <table class="t"><tr><th>SPECIES</th><th>LINEAGE</th><th>N GENES</th><th>N ORTHOLOGS</th><th>FRAC CONSERVED</th></tr>
+                <tr><td colspan="5" style="text-align:center;color:var(--txt-muted)">◈ La tabla y las barras por especie aparecen tras RUN / TEST</td></tr></table>
+
+              <div style="font-size:10px;color:var(--teal)">▼ ② Family × Species Matrix</div>
+              <div class="ph-box">◉ Heatmap / burbuja: fracción de genes con ≥1 ortólogo por familia y especie</div>
+
+              <div style="font-size:10px;color:var(--orchid)">▼ ③ Clade Conservation Profile</div>
+              <div class="ph-box">◆ Distribución de conservación por clado filogenético · box + strip + media</div>
+
+              <div style="font-size:10px;color:var(--orchid)">▼ ④ IG Repertoire Specialization</div>
+              <div class="ph-box" style="min-height:90px">Heavy/light · κ:λ · V/D/J/C · entropía de Shannon · core / lineage-specific · Jaccard</div>
+            </div></div>
+
+          <!-- advanced sections -->
+          <div class="pane"><div class="h" style="color:var(--lavender)"><span class="accent" style="background:var(--lavender)"></span>◆ DISTRIBUCIÓN DE SCORES DE CONSERVACIÓN
+            <span style="margin-left:auto;font-size:9px;color:var(--txt-muted);font-weight:normal">Histograma · CDF · Boxplot/Violín · Percentiles</span></div>
+            <div class="bd"><div class="bars">
+              <i style="height:30%;background:var(--lavender)"></i><i style="height:55%;background:var(--lavender)"></i>
+              <i style="height:80%;background:var(--violet)"></i><i style="height:95%;background:var(--cyan)"></i>
+              <i style="height:70%;background:var(--violet)"></i><i style="height:45%;background:var(--lavender)"></i>
+              <i style="height:25%;background:var(--lavender)"></i></div></div></div>
+
+          <div class="pane"><div class="h" style="color:var(--amber)"><span class="accent" style="background:var(--amber)"></span>▲ IG GENE FAMILY BROWSER
+            <span style="margin-left:auto;font-size:9px;color:var(--txt-muted);font-weight:normal">IGHV / IGHD / IGHJ / IGLV / IGLC / IGKV</span></div>
+            <div class="bd"><div class="ph-box">▲ Desglose por familia y conservación por segmento</div></div></div>
+
+          <div class="pane"><div class="h" style="color:var(--rose)"><span class="accent" style="background:var(--rose)"></span>⚡ REPORTE ESTADÍSTICO & EXPORTACIONES
+            <span style="margin-left:auto;font-size:9px;color:var(--txt-muted);font-weight:normal">Welch T · Mann-Whitney U · χ² · FDR</span></div>
+            <div class="bd">
+              <div class="ph-box" style="min-height:60px;text-align:left">Statistical Summary &nbsp; ⟳ Actualizar
+— ejecuta OMICS para poblar el resumen —</div>
+              <div style="font-size:10px;color:var(--rose);font-weight:bold">Export Center</div>
+              <div class="btns">
+                <span class="b" style="color:var(--cyan)">◈ Cross Species CSV</span>
+                <span class="b" style="color:var(--amber)">▲ Family Summary CSV</span>
+                <span class="b" style="color:var(--lavender)">◆ Todas las figuras PNG</span>
+                <span class="b" style="color:var(--rose)">📋 Reporte completo TXT</span>
+              </div>
+            </div></div>
+        </div>
+      </div>
+
+      <div class="manual">
+        <div class="purpose" style="border-left-color:var(--cyan)">
+          <div class="lbl">¿Qué hace?</div>
+          <p>Es la vista comparativa entre muchos genomas. Cruza los datos de ortología de todas las especies del lote para responder: <b>¿qué especies conservan más los IG humanos?</b>, <b>¿cómo se reparte la conservación por familia y por clado?</b> y <b>qué tan especializado está el repertorio IG</b> de cada especie. Incluye un centro de exportación.</p>
+        </div>
+
+        <div class="blocklabel">Cómo se usa</div>
+        <div class="steps">
+          <div class="step"><div><b>Prepara los datos multi-especie.</b><p>Si el banner pide más genomas, ve a SCAN, enciende <b>MULTISPECIES</b> y lanza el lote — o pulsa <b>🧪 TEST</b> para previsualizar con datos de ejemplo.</p></div></div>
+          <div class="step"><div><b>Carga o ejecuta.</b><p><b>LOAD FROM OMICS / SCAN</b> usa lo que ya está en memoria; <b>RUN MULTISPECIES</b> lanza el lote completo. La <b>CONFIGURED LIST</b> está enlazada en vivo con CONFIGURE LIST de SCAN.</p></div></div>
+          <div class="step"><div><b>Filtra el ranking.</b><p>Cambia el orden (conservación, ortólogos o nombre), filtra por clado y sube el umbral <b>Min %</b>. La tabla, las barras y la dona por linaje responden al instante.</p></div></div>
+          <div class="step"><div><b>Explora matriz, clados y repertorio.</b><p>Las sub-vistas ② familia×especie, ③ perfil por clado y ④ especialización IG se abren bajo el ranking. Más abajo están la distribución de scores y el navegador de familias.</p></div></div>
+          <div class="step"><div><b>Exporta.</b><p>En <b>Export Center</b> guarda el CSV de cross species, el resumen por familia, todas las figuras PNG o el reporte completo en TXT.</p></div></div>
+        </div>
+
+        <div class="ref">
+          <div class="rh" style="color:var(--cyan)">Secciones de la pestaña</div>
+          <table class="ref-t">
+            <tr><td>4 tarjetas resumen</td><td>Especies comparadas, linajes cubiertos, gen más conservado y conservación media.</td></tr>
+            <tr><td>① Species Conservation Ranking</td><td>Tabla interactiva + barras horizontales + dona por linaje.</td></tr>
+            <tr><td>② Family × Species Matrix</td><td>Heatmap o burbuja con la fracción de genes con ortólogo por familia y especie.</td></tr>
+            <tr><td>③ Clade Conservation Profile</td><td>Box + strip + media de conservación por clado filogenético.</td></tr>
+            <tr><td>④ IG Repertoire Specialization</td><td>Heavy/light, κ:λ, segmentos V/D/J/C, entropía de Shannon, core/lineage-specific y Jaccard.</td></tr>
+            <tr><td>Distribución / Family Browser</td><td>Histograma, CDF, boxplot/violín; y desglose por familias IGHV/IGHD/IGHJ/IGLV/IGLC/IGKV.</td></tr>
+            <tr><td>Reporte & Export Center</td><td>Resumen estadístico (Welch T, Mann-Whitney U, χ², FDR, percentiles) y exportación CSV/PNG/TXT.</td></tr>
+          </table>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ════════════════════ 6 · PLOTS ════════════════════ -->
+    <section class="tab" id="plots">
+      <div class="tabhead">
+        <div class="ic" style="background:rgba(212,168,240,.16);color:var(--violet)">◈</div>
+        <div class="meta">
+          <div class="kicker" style="color:var(--violet)">Pestaña 6 · Visualización</div>
+          <h3>PLOTS — Galería de gráficas</h3>
+          <div class="lede">Renderiza más de 35 gráficas configurables sobre los genes clasificados.</div>
+        </div>
+      </div>
+
+      <div class="blocklabel">Vista de la pestaña</div>
+      <div class="screen">
+        <div class="barrow">
+          <div class="tabbtn">✿ SCAN</div><div class="tabbtn">⚙ CONFIG</div><div class="tabbtn">⊙ MONITOR</div><div class="tabbtn">⬡ OMICS</div><div class="tabbtn">⬢ CROSS SPECIES</div>
+          <div class="tabbtn active" style="border-color:var(--violet);color:var(--violet)">◈ PLOTS</div>
+          <div class="tabbtn">✦ RESULTS</div><div class="tabbtn">◉ LOG</div>
+        </div>
+        <div class="body">
+          <div class="pane" style="background:var(--bg2)"><div class="bd" style="flex-direction:row;flex-wrap:wrap;align-items:center;gap:8px;padding:9px 12px">
+            <div class="input" style="min-width:220px;color:var(--cyan)">Boxplot ▾</div>
+            <span class="b">◀</span><span class="b">▶</span>
+            <span class="b solid" style="background:linear-gradient(90deg,var(--violet),var(--cyan));color:#231a33;font-weight:bold">▶ RENDER</span>
+            <span class="b" style="color:var(--emerald)">⚗ TEST DEMO</span>
+          </div></div>
+          <div class="pane" style="background:var(--panel2)"><div class="bd" style="flex-direction:row;justify-content:space-between;align-items:center;padding:8px 12px">
+            <span style="font-size:11px;color:var(--violet);font-weight:bold">⚙ PLOT CONFIGURATION ▼</span>
+            <span class="b" style="color:var(--amber)">↺ RESET</span>
+          </div></div>
+          <div class="pane" style="border-style:dashed">
+            <div class="ph-box" style="min-height:230px">◈ Selecciona una gráfica y pulsa RENDER
+para dibujarla aquí.
+
+Categorías: Length Analysis · Distribution · Biotypes · IG Enrichment per Chromosome</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="manual">
+        <div class="purpose" style="border-left-color:var(--violet)">
+          <div class="lbl">¿Qué hace?</div>
+          <p>Convierte los resultados del escaneo en gráficas. Un menú agrupa más de 35 visualizaciones por categoría; eliges una, ajustas sus parámetros en el panel de configuración y la dibujas en el lienzo. <b>TEST DEMO</b> permite verlas con datos de ejemplo sin haber corrido nada.</p>
+        </div>
+
+        <div class="blocklabel">Cómo se usa</div>
+        <div class="steps">
+          <div class="step"><div><b>Elige la gráfica.</b><p>Abre el menú desplegable y selecciona una opción. Los encabezados de categoría (── Length Analysis ──, etc.) no son seleccionables; sí lo son las gráficas que cuelgan de ellos.</p></div></div>
+          <div class="step"><div><b>Navega rápido.</b><p>Las flechas <b>◀ / ▶</b> saltan a la gráfica anterior o siguiente sin abrir el menú.</p></div></div>
+          <div class="step"><div><b>Ajusta los parámetros.</b><p>Despliega <b>PLOT CONFIGURATION ▼</b> para cambiar escala, colores, bins y demás. <b>↺ RESET</b> devuelve los valores por defecto.</p></div></div>
+          <div class="step"><div><b>Dibuja.</b><p>Pulsa <b>RENDER</b> para generar la figura. ¿Sin datos aún? Usa <b>⚗ TEST DEMO</b> para previsualizar con datos sintéticos.</p></div></div>
+        </div>
+
+        <div class="ref">
+          <div class="rh" style="color:var(--violet)">Categorías del menú de gráficas</div>
+          <table class="ref-t">
+            <tr><td>Length Analysis</td><td>Boxplot y violín (escala normal y log), histograma de longitud y KDE de longitud de transcrito (ridgeline).</td></tr>
+            <tr><td>Distribution</td><td>Distribución por cromosoma, dona de clases (con tarjetas) y genes por cromosoma (barras + strip de densidad).</td></tr>
+            <tr><td>Biotypes</td><td>Biotipos para IG y para MEG.</td></tr>
+            <tr><td>IG Enrichment per Chromosome</td><td>Una gráfica de enriquecimiento de IG por cada cromosoma (1–22, X, Y, MT).</td></tr>
+          </table>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ════════════════════ 7 · RESULTS ════════════════════ -->
+    <section class="tab" id="results">
+      <div class="tabhead">
+        <div class="ic" style="background:rgba(224,204,255,.16);color:var(--lavender)">✦</div>
+        <div class="meta">
+          <div class="kicker" style="color:var(--lavender)">Pestaña 7 · Tablas de genes</div>
+          <h3>RESULTS — Genes clasificados</h3>
+          <div class="lede">El recuento por clase y las tablas detalladas de cada gen, separadas en IG / MEG / ui-SEG.</div>
+        </div>
+      </div>
+
+      <div class="blocklabel">Vista de la pestaña</div>
+      <div class="screen">
+        <div class="barrow">
+          <div class="tabbtn">✿ SCAN</div><div class="tabbtn">⚙ CONFIG</div><div class="tabbtn">⊙ MONITOR</div><div class="tabbtn">⬡ OMICS</div><div class="tabbtn">⬢ CROSS SPECIES</div><div class="tabbtn">◈ PLOTS</div>
+          <div class="tabbtn active" style="border-color:var(--lavender);color:var(--lavender)">✦ RESULTS</div>
+          <div class="tabbtn">◉ LOG</div>
+        </div>
+        <div class="body">
+          <div class="body" style="grid-template-columns:1fr 1fr 1fr;padding:0">
+            <div class="card" style="background:rgba(232,168,216,.09);border:1px solid rgba(232,168,216,.33)"><div class="ct" style="color:var(--teal)">INTRONLESS GENES</div><div class="cv" style="color:var(--teal)">—</div><div style="font-size:9px;color:var(--txt-muted)">IG · genes clasificados</div></div>
+            <div class="card" style="background:rgba(177,143,232,.09);border:1px solid rgba(177,143,232,.33)"><div class="ct" style="color:var(--cyan)">MULTI-EXON GENES</div><div class="cv" style="color:var(--cyan)">—</div><div style="font-size:9px;color:var(--txt-muted)">MEG · genes clasificados</div></div>
+            <div class="card" style="background:rgba(212,168,240,.09);border:1px solid rgba(212,168,240,.33)"><div class="ct" style="color:var(--violet)">UTR-INTRONLESS (SEG)</div><div class="cv" style="color:var(--violet)">—</div><div style="font-size:9px;color:var(--txt-muted)">ui-SEG · genes clasificados</div></div>
+          </div>
+
+          <div class="pane"><div class="barrow" style="border:none">
+            <div class="tabbtn active" style="border-color:var(--lavender);color:var(--lavender)">IG</div>
+            <div class="tabbtn">MEG</div><div class="tabbtn">ui-SEG</div>
+          </div>
+            <div class="bd" style="padding:0">
+              <table class="t">
+                <tr><th>GENE ID</th><th>GENE NAME</th><th>CHROM</th><th>STRAND</th><th>BIOTYPE</th><th>REPR. TX LEN</th><th>N TX</th><th>START</th><th>END</th><th>CLASS</th></tr>
+                <tr><td colspan="10" style="text-align:center;color:var(--txt-muted);padding:20px">— ejecuta un escaneo para poblar la tabla —</td></tr>
+              </table>
+            </div></div>
+        </div>
+      </div>
+
+      <div class="manual">
+        <div class="purpose" style="border-left-color:var(--lavender)">
+          <div class="lbl">¿Qué hace?</div>
+          <p>Es la salida tabular del análisis. Tres tarjetas grandes resumen cuántos genes hay en cada clase, y debajo, tres pestañas internas (<b>IG</b>, <b>MEG</b>, <b>ui-SEG</b>) listan gen por gen con todos sus atributos. Es lo que se exporta como TSV al terminar.</p>
+        </div>
+
+        <div class="blocklabel">Cómo se usa</div>
+        <div class="steps">
+          <div class="step"><div><b>Mira el recuento.</b><p>Las tarjetas IG / MEG / ui-SEG dan el total de cada clase de un vistazo.</p></div></div>
+          <div class="step"><div><b>Cambia de clase.</b><p>Las pestañas internas <b>IG</b>, <b>MEG</b> y <b>ui-SEG</b> alternan entre las tres tablas.</p></div></div>
+          <div class="step"><div><b>Explora y desplázate.</b><p>Cada tabla muestra hasta 2000 filas con scroll vertical y horizontal; las filas se colorean en alterno para leerlas mejor.</p></div></div>
+          <div class="step"><div><b>Reutiliza la salida.</b><p>Estos mismos datos se guardan como TSV en tu carpeta de salida con el prefijo definido en SCAN.</p></div></div>
+        </div>
+
+        <div class="ref">
+          <div class="rh" style="color:var(--lavender)">Columnas de cada tabla</div>
+          <table class="ref-t">
+            <tr><td><code>gene_id</code> / <code>gene_name</code></td><td>Identificador Ensembl y nombre del gen.</td></tr>
+            <tr><td><code>chrom</code> / <code>strand</code></td><td>Cromosoma y hebra (+ / −).</td></tr>
+            <tr><td><code>gene_biotype</code></td><td>Biotipo (protein_coding, lncRNA, …).</td></tr>
+            <tr><td><code>representative_transcript_length</code></td><td>Longitud del transcrito representativo.</td></tr>
+            <tr><td><code>n_transcripts_used</code></td><td>Número de transcritos considerados.</td></tr>
+            <tr><td><code>gene_start</code> / <code>gene_end</code></td><td>Coordenadas genómicas.</td></tr>
+            <tr><td><code>class_label</code></td><td>Clase asignada: IG, MEG o ui-SEG.</td></tr>
+          </table>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ════════════════════ 8 · LOG ════════════════════ -->
+    <section class="tab" id="log">
+      <div class="tabhead">
+        <div class="ic" style="background:rgba(177,143,232,.16);color:var(--cyan)">◉</div>
+        <div class="meta">
+          <div class="kicker" style="color:var(--cyan)">Pestaña 8 · Terminal de ejecución</div>
+          <h3>LOG — Registro de ejecución</h3>
+          <div class="lede">La consola completa con cada mensaje del pipeline, filtrable por nivel.</div>
+        </div>
+      </div>
+
+      <div class="blocklabel">Vista de la pestaña</div>
+      <div class="screen">
+        <div class="barrow">
+          <div class="tabbtn">✿ SCAN</div><div class="tabbtn">⚙ CONFIG</div><div class="tabbtn">⊙ MONITOR</div><div class="tabbtn">⬡ OMICS</div><div class="tabbtn">⬢ CROSS SPECIES</div><div class="tabbtn">◈ PLOTS</div><div class="tabbtn">✦ RESULTS</div>
+          <div class="tabbtn active" style="border-color:var(--cyan);color:var(--cyan)">◉ LOG</div>
+        </div>
+        <div class="body">
+          <div class="pane" style="background:var(--bg2)"><div class="bd" style="flex-direction:row;align-items:center;gap:8px;padding:9px 12px">
+            <span style="font-size:11px;color:var(--txt-dim);font-weight:bold">Execution Log</span>
+            <span class="tag" style="background:rgba(240,184,232,.12);border:1px solid rgba(240,184,232,.4);color:var(--emerald)">OK</span>
+            <span class="tag" style="background:rgba(248,208,238,.12);border:1px solid rgba(248,208,238,.4);color:var(--amber)">WARN</span>
+            <span class="tag" style="background:rgba(255,112,153,.12);border:1px solid rgba(255,112,153,.4);color:var(--red)">ERR</span>
+            <span class="tag" style="background:rgba(200,184,240,.12);border:1px solid rgba(200,184,240,.4);color:var(--txt-dim)">INFO</span>
+            <span class="b" style="margin-left:auto;font-weight:bold">CLR</span>
+          </div></div>
+          <div class="term">
+            <div class="tt">◉ IGFinder · Execution Terminal</div>
+            <pre><span class="c-dim">[12:04:01]</span> <span class="c-info">IGFinder 2.0 iniciado · Ensembl REST v16</span>
+<span class="c-dim">[12:04:02]</span> <span class="c-ok">✔ Conexión a Ensembl establecida</span>
+<span class="c-dim">[12:04:03]</span> <span class="c-info">Especie: homo_sapiens · GRCh38.p14</span>
+<span class="c-dim">[12:04:05]</span> <span class="c-info">Descargando anotación de genes…</span>
+<span class="c-dim">[12:04:18]</span> <span class="c-warn">⚠ Reintento 1/3 en chr14 (timeout)</span>
+<span class="c-dim">[12:04:22]</span> <span class="c-ok">✔ chr14 recuperado</span>
+<span class="c-dim">[12:05:40]</span> <span class="c-ok">✔ Clasificación completada · IG / MEG / ui-SEG</span>
+<span class="c-dim">[12:05:41]</span> <span class="c-ok">✔ Orthology heatmap saved</span>
+<span class="c-dim">[12:05:42]</span> <span class="c-info">TSV guardado en ~/igfinder_out</span></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="manual">
+        <div class="purpose" style="border-left-color:var(--cyan)">
+          <div class="lbl">¿Qué hace?</div>
+          <p>Es la consola técnica del programa. Mientras el MONITOR muestra un feed resumido, aquí queda <b>el registro completo y con marca de tiempo</b> de cada paso: conexiones, descargas, reintentos, advertencias, errores y rutas de guardado. Es el primer lugar al que mirar si algo falla.</p>
+        </div>
+
+        <div class="blocklabel">Cómo se usa</div>
+        <div class="steps">
+          <div class="step"><div><b>Lee el flujo.</b><p>Cada línea lleva hora y un color según su nivel. El registro avanza solo conforme corre el pipeline.</p></div></div>
+          <div class="step"><div><b>Interpreta los niveles.</b><p>Las insignias <b>OK</b>, <b>WARN</b>, <b>ERR</b> e <b>INFO</b> indican el código de color de cada tipo de mensaje.</p></div></div>
+          <div class="step"><div><b>Diagnostica problemas.</b><p>Si un escaneo se detiene, busca aquí las líneas <b>ERR</b> y <b>WARN</b> para entender qué petición o cromosoma falló.</p></div></div>
+          <div class="step"><div><b>Limpia la consola.</b><p>El botón <b>CLR</b> vacía el registro (también el feed del MONITOR) para empezar limpio la siguiente corrida.</p></div></div>
+        </div>
+
+        <div class="ref">
+          <div class="rh" style="color:var(--cyan)">Niveles de mensaje</div>
+          <table class="ref-t">
+            <tr><td><code>OK</code></td><td>Paso completado con éxito (verde/rosa).</td></tr>
+            <tr><td><code>WARN</code></td><td>Aviso no fatal: reintentos, datos parciales, fallbacks.</td></tr>
+            <tr><td><code>ERR</code></td><td>Error que detuvo o degradó una operación (coral).</td></tr>
+            <tr><td><code>INFO</code></td><td>Mensajes informativos del flujo normal.</td></tr>
+            <tr><td><code>CLR</code></td><td>Limpia el registro de esta pestaña y el feed del MONITOR.</td></tr>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<footer>
+  IGFinder 2.0 · Intronless Gene Architecture Analyzer — Manual de uso por pestaña.
+  Recreación de la interfaz con la paleta y tipografía originales (índigo cálido + lavanda/rosa, Courier New).
+  Flujo recomendado: <b>Instalación</b> → <b>SCAN</b> → seguir en <b>MONITOR</b>/<b>LOG</b> → revisar <b>RESULTS</b>/<b>PLOTS</b> → profundizar en <b>OMICS</b>/<b>CROSS SPECIES</b>; <b>CONFIG</b> ajusta el motor.
+</footer>
+
+</body>
+</html>
